@@ -1,3 +1,4 @@
+// swiftlint:disable generic_type_name
 import Foundation
 
 #if canImport(FoundationNetworking)
@@ -6,29 +7,10 @@ import Foundation
 
 public protocol MarkdownContentBuilder {
   associatedtype SourceType
-  func content(from source: SourceType, using htmlToMarkdown: @escaping (String) throws -> String) throws -> String
-}
-
-public struct MarkdownContentBuilderOptions: OptionSet {
-  public let rawValue: Int
-
-  public init(rawValue: RawValue) {
-    self.rawValue = rawValue
-  }
-
-  public typealias RawValue = Int
-
-  static let shouldOverwriteExisting: Self = .init(rawValue: 1)
-  static let includeMissingPrevious: Self = .init(rawValue: 2)
-}
-
-extension MarkdownContentBuilderOptions {
-  public init(shouldOverwriteExisting: Bool, includeMissingPrevious: Bool) {
-    self.init([
-      includeMissingPrevious ? .includeMissingPrevious : .init(),
-      shouldOverwriteExisting ? .shouldOverwriteExisting : .init()
-    ])
-  }
+  func content(
+    from source: SourceType,
+    using htmlToMarkdown: @escaping (String) throws -> String
+  ) throws -> String
 }
 
 extension MarkdownContentBuilder {
@@ -52,11 +34,23 @@ extension MarkdownContentBuilder {
     return fileExists
   }
 
-  public func write<ContentURLGeneratorType: ContentURLGenerator>(from sources: [SourceType], atContentPathURL contentPathURL: URL, basedOn urlGenerator: ContentURLGeneratorType, using htmlToMarkdown: @escaping (String) throws -> String, options: MarkdownContentBuilderOptions = []) throws where ContentURLGeneratorType.SourceType == SourceType {
+  public func write<ContentURLGeneratorType: ContentURLGenerator>(
+    from sources: [SourceType],
+    atContentPathURL contentPathURL: URL,
+    basedOn urlGenerator: ContentURLGeneratorType,
+    using htmlToMarkdown: @escaping (String) throws -> String,
+    options: MarkdownContentBuilderOptions = []
+  ) throws where ContentURLGeneratorType.SourceType == SourceType {
     var newslettersWrittenIndicies = [Int]()
     var lastExistsIndex: Int?
     for (index, source) in sources.enumerated() {
-      let fileAlreadyExisted = try write(from: source, atContentPathURL: contentPathURL, basedOn: urlGenerator, using: htmlToMarkdown, shouldOverwrite: options.contains(.shouldOverwriteExisting))
+      let fileAlreadyExisted = try write(
+        from: source,
+        atContentPathURL: contentPathURL,
+        basedOn: urlGenerator,
+        using: htmlToMarkdown,
+        shouldOverwrite: options.contains(.shouldOverwriteExisting)
+      )
       if fileAlreadyExisted {
         lastExistsIndex = index
       } else {
@@ -69,7 +63,10 @@ extension MarkdownContentBuilder {
     if let lastExistsIndex = lastExistsIndex {
       for index in newslettersWrittenIndicies {
         if index < lastExistsIndex {
-          let url = urlGenerator.destinationURL(basedOn: sources[index], atContentPathURL: contentPathURL)
+          let url = urlGenerator.destinationURL(
+            basedOn: sources[index],
+            atContentPathURL: contentPathURL
+          )
           try FileManager.default.removeItem(at: url)
         } else {
           return
@@ -78,3 +75,5 @@ extension MarkdownContentBuilder {
     }
   }
 }
+
+// swiftlint:enable generic_type_name

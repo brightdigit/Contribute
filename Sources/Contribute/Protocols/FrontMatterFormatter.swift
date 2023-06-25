@@ -5,5 +5,7 @@ import Foundation
 #endif
 
 public protocol FrontMatterFormatter {
-  func format<FrontMatterType>(_ frontMatter: FrontMatterType) throws -> String where FrontMatterType: Encodable
+  func format<FrontMatterType>(
+    _ frontMatter: FrontMatterType
+  ) throws -> String where FrontMatterType: Encodable
 }

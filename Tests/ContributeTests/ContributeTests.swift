@@ -1,12 +1,8 @@
 @testable import Contribute
 import XCTest
 
-final class ContributeTests: XCTestCase {
-  func testExample() throws {
-    // XCTest Documentation
-    // https://developer.apple.com/documentation/xctest
-
-    // Defining Test Cases and Test Methods
-    // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
+internal final class ContributeTests: XCTestCase {
+  internal func testExample() throws {
+    XCTAssertTrue(true)
   }
 }

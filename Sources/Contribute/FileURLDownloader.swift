@@ -4,22 +4,32 @@ import Foundation
   import FoundationNetworking
 #endif
 public struct FileURLDownloader: URLDownloader {
+  internal let session: URLSession
+  internal let fileManager: FileManager
+
   public init(session: URLSession = .shared, fileManager: FileManager = .default) {
     self.session = session
     self.fileManager = fileManager
   }
 
-  let session: URLSession
-  let fileManager: FileManager
-
-  public func download(from fromURL: URL, to toURL: URL, allowOverwrite: Bool, _ completion: @escaping (Error?) -> Void) {
+  public func download(
+    from fromURL: URL,
+    to toURL: URL,
+    allowOverwrite: Bool,
+    _ completion: @escaping (Error?) -> Void
+  ) {
     let task = session.downloadTask(with: fromURL) { destination, _, error in
       var resultError: Error?
       if let error = error {
         resultError = error
       } else if let sourceURL = destination {
         do {
-          try self.fileManager.createDirectory(at: toURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+          try self.fileManager.createDirectory(
+            at: toURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true,
+            attributes: nil
+          )
+
           if self.fileManager.fileExists(atPath: toURL.path) {
             if allowOverwrite {
               _ = try self.fileManager.replaceItemAt(toURL, withItemAt: sourceURL)

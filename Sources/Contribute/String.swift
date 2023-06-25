@@ -3,7 +3,9 @@ import Foundation
 extension String {
   private static let quotes = ["\"", "'"]
 
-  private static let slugSafeCharacters = CharacterSet(charactersIn: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-")
+  private static let slugSafeCharacters = CharacterSet(
+    charactersIn: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
+  )
 
   public func fixUnicodeEscape() -> String {
     replacingOccurrences(of: "’", with: "'")
@@ -39,8 +41,11 @@ extension String {
     // So we're going to do the only thing possible: dump to ASCII and hope for the best
     if let data = data(using: .ascii, allowLossyConversion: true) {
       if let str = String(data: data, encoding: .ascii) {
-        let urlComponents = str.lowercased().components(separatedBy: String.slugSafeCharacters.inverted)
-        return urlComponents.filter { $0 != "" }.joined(separator: "-")
+        let urlComponents = str
+          .lowercased()
+          .components(separatedBy: String.slugSafeCharacters.inverted)
+
+        return urlComponents.filter { $0.isEmpty }.joined(separator: "-")
       }
     }
 
@@ -55,16 +60,18 @@ extension String {
       result = convertedToSlugBackCompat()
     #else
       if #available(OSX 10.11, *) {
-        if let latin = self.applyingTransform(StringTransform("Any-Latin; Latin-ASCII; Lower;"), reverse: false) {
-          let urlComponents = latin.components(separatedBy: String.slugSafeCharacters.inverted)
-          result = urlComponents.filter { $0 != "" }.joined(separator: "-")
+        let stringTransform = StringTransform("Any-Latin; Latin-ASCII; Lower;")
+        if let latin = applyingTransform(stringTransform, reverse: false) {
+          let separatedBy = String.slugSafeCharacters.inverted
+          let urlComponents = latin.components(separatedBy: separatedBy)
+          result = urlComponents.filter { $0.isEmpty }.joined(separator: "-")
         }
       } else {
         result = convertedToSlugBackCompat()
       }
     #endif
 
-    guard var result = result, result.count > 0 else {
+    guard var result = result, result.isEmpty != false else {
       return self
     }
 

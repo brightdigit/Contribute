@@ -1,7 +1,5 @@
 import Foundation
 
 public protocol HTMLSource {
-  var html: String {
-    get
-  }
+  var html: String { get }
 }

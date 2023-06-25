@@ -11,7 +11,9 @@ public protocol FrontMatterExporter {
 }
 
 extension YAMLEncoder: FrontMatterFormatter {
-  public func format<FrontMatterType>(_ frontMatter: FrontMatterType) throws -> String where FrontMatterType: Encodable {
+  public func format<FrontMatterType>(
+    _ frontMatter: FrontMatterType
+  ) throws -> String where FrontMatterType: Encodable {
     try encode(frontMatter).trimmingCharacters(in: .whitespacesAndNewlines)
   }
 }

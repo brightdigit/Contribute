@@ -1,3 +1,4 @@
+// swiftlint:disable generic_type_name
 import Foundation
 import Yams
 
@@ -8,18 +9,17 @@ import Yams
 public struct FrontMatterYAMLExporter<
   SourceType,
   FrontMatterTranslatorType: FrontMatterTranslator
->: FrontMatterExporter where
-  FrontMatterTranslatorType.SourceType == SourceType {
-  public init(translator: FrontMatterTranslatorType) {
-    self.translator = translator
-  }
-
-  let translator: FrontMatterTranslatorType
-  let formatter: FrontMatterFormatter = {
+>: FrontMatterExporter where FrontMatterTranslatorType.SourceType == SourceType {
+  internal let translator: FrontMatterTranslatorType
+  internal let formatter: FrontMatterFormatter = {
     let encoder = YAMLEncoder()
     encoder.options = .init(width: -1, allowUnicode: true)
     return encoder
   }()
+
+  public init(translator: FrontMatterTranslatorType) {
+    self.translator = translator
+  }
 
   public func frontMatterText(from source: SourceType) throws -> String {
     let specs = translator.frontMatter(from: source)
@@ -27,3 +27,5 @@ public struct FrontMatterYAMLExporter<
     return frontMatterText
   }
 }
+
+// swiftlint:enable generic_type_name

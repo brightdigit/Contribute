@@ -5,7 +5,10 @@ import Foundation
 #endif
 
 public struct SimpleFrontMatterMarkdownFormatter: FrontMatterMarkdownFormatter {
-  public func format(frontMatterText: String, withMarkdown markdownText: String) -> String {
+  public func format(
+    frontMatterText: String,
+    withMarkdown markdownText: String
+  ) -> String {
     ["---", frontMatterText, "---", markdownText].joined(separator: "\n")
   }
 }
