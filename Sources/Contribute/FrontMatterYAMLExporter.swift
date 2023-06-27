@@ -10,8 +10,8 @@ public struct FrontMatterYAMLExporter<
   SourceType,
   FrontMatterTranslatorType: FrontMatterTranslator
 >: FrontMatterExporter where FrontMatterTranslatorType.SourceType == SourceType {
-  internal let translator: FrontMatterTranslatorType
-  internal let formatter: FrontMatterFormatter = {
+  private let translator: FrontMatterTranslatorType
+  private let formatter: FrontMatterFormatter = {
     let encoder = YAMLEncoder()
     encoder.options = .init(width: -1, allowUnicode: true)
     return encoder
@@ -27,5 +27,3 @@ public struct FrontMatterYAMLExporter<
     return frontMatterText
   }
 }
-
-// swiftlint:enable generic_type_name

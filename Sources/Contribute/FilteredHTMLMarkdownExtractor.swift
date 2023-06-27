@@ -1,17 +1,19 @@
 import Foundation
 
+/// A type that extracts HTML content from markdown.
 public struct FilteredHTMLMarkdownExtractor<SourceType: HTMLSource>: MarkdownExtractor {
-  internal let preFilters: [(String) throws -> (String)] = []
-  internal let postFilters: [(String) throws -> (String)] = []
-
   public init() {}
 
+  /// Convert the HTML content to markdown.
+  ///
+  /// - Parameters:
+  ///   - source: The HTML content source.
+  ///   - htmlToMarkdown: Converter for processing the HTML.
+  /// - Returns: The resulting markdown.
   public func markdown(
     from source: SourceType,
     using htmlToMarkdown: @escaping (String) throws -> String
   ) throws -> String {
-    let body = try preFilters.reduce(source.html) { try $1($0) }
-    let rawMarkdown = try htmlToMarkdown(body)
-    return try postFilters.reduce(rawMarkdown) { try $1($0) }
+    try htmlToMarkdown(source.html)
   }
 }

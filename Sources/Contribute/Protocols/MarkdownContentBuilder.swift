@@ -5,8 +5,19 @@ import Foundation
   import FoundationNetworking
 #endif
 
+/// A protocol that builds markdown content.
 public protocol MarkdownContentBuilder {
+  /// The type of the source data.
   associatedtype SourceType
+
+  /// Builds markdown content from the given input source, using the provided
+  /// `htmlToMarkdown` function.
+  ///
+  /// - Parameters:
+  ///   - source: The source data from which to generate markdown content.
+  ///   - htmlToMarkdown: A function that converts HTML to Markdown.
+  /// - Returns: The generated markdown content.
+  /// - Throws: An error if the source data could not be processed.
   func content(
     from source: SourceType,
     using htmlToMarkdown: @escaping (String) throws -> String
@@ -14,6 +25,17 @@ public protocol MarkdownContentBuilder {
 }
 
 extension MarkdownContentBuilder {
+  /// Generates the markdown content from the given source data, then writes it
+  /// at the given content path URL.
+  ///
+  /// - Parameters:
+  ///   - source: The source data.
+  ///   - contentPathURL: The content path URL.
+  ///   - destinationURLGenerator: A function that generates the destination URL for
+  ///     the source data.
+  ///   - htmlToMarkdown: A function that converts HTML to markdown.
+  ///   - shouldOverwrite: Whether to overwrite the destination file if it already exists.
+  /// - Returns: Whether the file already existed.
   public func write<ContentURLGeneratorType: ContentURLGenerator>(
     from source: SourceType,
     atContentPathURL contentPathURL: URL,
@@ -22,58 +44,67 @@ extension MarkdownContentBuilder {
     shouldOverwrite: Bool = false
   ) throws -> Bool where ContentURLGeneratorType.SourceType == Self.SourceType {
     let destinationURL = destinationURLGenerator.destinationURL(
-      basedOn: source,
+      from: source,
       atContentPathURL: contentPathURL
     )
+
     let fileExists = FileManager.default.fileExists(atPath: destinationURL.path)
+
     guard !fileExists || shouldOverwrite else {
       return fileExists
     }
+
     let contentText = try content(from: source, using: htmlToMarkdown)
     try contentText.write(to: destinationURL, atomically: true, encoding: .utf8)
     return fileExists
   }
 
+  /// Generates the markdown content from each of the give source data, then writes it
+  /// at the given content path URL.
+  ///
+  /// - Parameters:
+  ///   - sources: List of source data to write.
+  ///   - contentPathURL: The content path URL.
+  ///   - destinationURLGenerator: A function that generates the destination URL for
+  ///     the source data.
+  ///   - htmlToMarkdown: A function that converts HTML to Markdown.
+  ///   - options: A set of options that control the behavior of the write operation.
+  /// - Throws: An error if the write operation fails.
   public func write<ContentURLGeneratorType: ContentURLGenerator>(
     from sources: [SourceType],
     atContentPathURL contentPathURL: URL,
-    basedOn urlGenerator: ContentURLGeneratorType,
+    basedOn destinationURLGenerator: ContentURLGeneratorType,
     using htmlToMarkdown: @escaping (String) throws -> String,
     options: MarkdownContentBuilderOptions = []
   ) throws where ContentURLGeneratorType.SourceType == SourceType {
-    var newslettersWrittenIndicies = [Int]()
-    var lastExistsIndex: Int?
+    var writtenIndicies = [Int]()
+    var lastExistsIndex: Int = -1
     for (index, source) in sources.enumerated() {
       let fileAlreadyExisted = try write(
         from: source,
         atContentPathURL: contentPathURL,
-        basedOn: urlGenerator,
+        basedOn: destinationURLGenerator,
         using: htmlToMarkdown,
         shouldOverwrite: options.contains(.shouldOverwriteExisting)
       )
       if fileAlreadyExisted {
         lastExistsIndex = index
       } else {
-        newslettersWrittenIndicies.append(index)
+        writtenIndicies.append(index)
       }
     }
+
     if options.contains(.includeMissingPrevious) {
       return
     }
-    if let lastExistsIndex = lastExistsIndex {
-      for index in newslettersWrittenIndicies {
-        if index < lastExistsIndex {
-          let url = urlGenerator.destinationURL(
-            basedOn: sources[index],
-            atContentPathURL: contentPathURL
-          )
-          try FileManager.default.removeItem(at: url)
-        } else {
-          return
-        }
-      }
+
+    for index in writtenIndicies where index < lastExistsIndex {
+      let url = destinationURLGenerator.destinationURL(
+        from: sources[index],
+        atContentPathURL: contentPathURL
+      )
+
+      try FileManager.default.removeItem(at: url)
     }
   }
 }
-
-// swiftlint:enable generic_type_name

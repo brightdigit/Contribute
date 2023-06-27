@@ -10,12 +10,12 @@ public struct MarkdownContentYAMLBuilder<
   MarkdownExtractorType: MarkdownExtractor,
   FrontMatterExporterType: FrontMatterExporter
 >: MarkdownContentBuilder where FrontMatterExporterType.SourceType == SourceType,
-                                MarkdownExtractorType.SourceType == SourceType
+  MarkdownExtractorType.SourceType == SourceType
 {
-  internal let frontMatterExporter: FrontMatterExporterType
-  internal let markdownExtractor: MarkdownExtractorType
+  private let contentFormatter: FrontMatterMarkdownFormatter = .simple
 
-  internal let contentFormatter: FrontMatterMarkdownFormatter = .simple
+  private let frontMatterExporter: FrontMatterExporterType
+  private let markdownExtractor: MarkdownExtractorType
 
   public init(
     frontMatterExporter: FrontMatterExporterType,
@@ -29,13 +29,11 @@ public struct MarkdownContentYAMLBuilder<
     from source: SourceType,
     using htmlToMarkdown: @escaping (String) throws -> String
   ) throws -> String {
-    let markdownText = try markdownExtractor.markdown(from: source, using: htmlToMarkdown)
     let frontMatterText = try frontMatterExporter.frontMatterText(from: source)
+    let markdownText = try markdownExtractor.markdown(from: source, using: htmlToMarkdown)
     return contentFormatter.format(
       frontMatterText: frontMatterText,
       withMarkdown: markdownText
     )
   }
 }
-
-// swiftlint:enable generic_type_name

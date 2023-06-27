@@ -1,19 +1,34 @@
 import Foundation
 
+// @Leo, I see this extension is never used by Contribute itself,
+// but in other Contribute* libs .. so? do we need to move it from
+// this lib?
+
 extension String {
   private static let quotes = ["\"", "'"]
 
+  /// The set of characters that are safe for use in slugs.
   private static let slugSafeCharacters = CharacterSet(
     charactersIn: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
   )
 
+  /// Fixes a unicode escape sequence in the string.
+  ///
+  /// - Returns: The string with the unicode escape sequence fixed.
   public func fixUnicodeEscape() -> String {
     replacingOccurrences(of: "’", with: "'")
   }
 
+  /// Removes any quotes from the string.
+  ///
+  /// - Returns: The string without any quotes.
   public func dequote() -> String {
     let trimmedString = trimmingCharacters(in: .whitespacesAndNewlines)
-    guard let first = trimmedString.first.map(String.init), let last = trimmedString.last.map(String.init), trimmedString.count > 1, last == first else {
+    guard
+      let first = trimmedString.first.map(String.init),
+      let last = trimmedString.last.map(String.init), trimmedString.count > 1,
+      last == first
+    else {
       return trimmedString
     }
 
@@ -26,6 +41,12 @@ extension String {
     return String(trimmedString[startIndex ..< endIndex])
   }
 
+  /// Pads the left side of the string with the specified character up to the specified width.
+  ///
+  /// - Parameters:
+  ///   - totalWidth: The desired width of the string.
+  ///   - byString: The character to pad the string with.
+  /// - Returns: The padded string.
   public func padLeft(totalWidth: Int, byString: String) -> String {
     let toPad = totalWidth - count
     if toPad < 1 {
@@ -53,6 +74,9 @@ extension String {
     return nil
   }
 
+  /// Converts the string to a slug.
+  ///
+  /// - Returns: The string converted to a slug.
   public func convertedToSlug() -> String {
     var result: String?
 

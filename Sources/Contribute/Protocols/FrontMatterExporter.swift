@@ -4,14 +4,14 @@ import Foundation
   import FoundationNetworking
 #endif
 
-/// A protocol that exports front matter from a source file.
+/// A protocol that exports front matter from a source data.
 public protocol FrontMatterExporter {
-  /// The type of the source file.
+  /// The type of the source data.
   associatedtype SourceType
 
-  /// Exports the front matter text from the given source file.
+  /// Exports the front matter text from the given source data.
   ///
-  /// - Parameter source: The source object to export front matter from.
+  /// - Parameter source: The source data to export front matter from.
   /// - Returns: The exported front matter text.
   /// - Throws: An error if the sources could not be processed.
   func frontMatterText(from source: SourceType) throws -> String

@@ -1,13 +1,13 @@
 import Foundation
 
-internal struct FileNameGenerator<SourceType>: BasicContentURLGenerator {
-  internal let fileNameWithoutExtensionAction: (SourceType) -> String
+public struct FileNameGenerator<SourceType>: BasicContentURLGenerator {
+  private let fileNameWithoutExtensionAction: (SourceType) -> String
 
-  internal init(_ fileNameWithoutExtensionFromSource: @escaping (SourceType) -> String) {
+  public init(_ fileNameWithoutExtensionFromSource: @escaping (SourceType) -> String) {
     fileNameWithoutExtensionAction = fileNameWithoutExtensionFromSource
   }
 
-  internal func fileNameWithoutExtensionFromSource(_ source: SourceType) -> String {
+  public func fileNameWithoutExtensionFromSource(_ source: SourceType) -> String {
     fileNameWithoutExtensionAction(source)
   }
 }
