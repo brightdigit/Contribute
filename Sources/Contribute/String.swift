@@ -1,9 +1,6 @@
 import Foundation
 
-// @Leo, I see this extension is never used by Contribute itself,
-// but in other Contribute* libs .. so? do we need to move it from
-// this lib?
-
+@available(*, deprecated)
 extension String {
   private static let quotes = ["\"", "'"]
 
