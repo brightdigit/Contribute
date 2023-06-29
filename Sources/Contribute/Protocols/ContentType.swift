@@ -1,4 +1,3 @@
-// swiftlint:disable generic_type_name
 import Foundation
 
 /// A protocol that represents a content type.
