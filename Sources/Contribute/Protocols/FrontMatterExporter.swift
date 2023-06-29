@@ -13,6 +13,6 @@ public protocol FrontMatterExporter {
   ///
   /// - Parameter source: The source data to export front matter from.
   /// - Returns: The exported front matter text.
-  /// - Throws: An error if the sources could not be processed.
+  /// - Throws: An error if the source data could not be processed.
   func frontMatterText(from source: SourceType) throws -> String
 }
