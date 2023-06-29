@@ -59,6 +59,7 @@ extension MarkdownContentBuilder {
     return fileExists
   }
 
+  // swiftlint:disable function_body_length
   /// Generates the markdown content from each of the give source data, then writes it
   /// at the given content path URL.
   ///
@@ -107,4 +108,6 @@ extension MarkdownContentBuilder {
       try FileManager.default.removeItem(at: url)
     }
   }
+
+  // swiftlint:enable function_body_length
 }

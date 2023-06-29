@@ -12,6 +12,11 @@ extension String {
     charactersIn: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
   )
 
+  /// Used to convert a string to a slug that is safe for use on macOS 10.11 and later.
+  private static let latinStringTransform = StringTransform(
+    "Any-Latin; Latin-ASCII; Lower;"
+  )
+
   /// Fixes a unicode escape sequence in the string.
   ///
   /// - Returns: The string with the unicode escape sequence fixed.
@@ -41,7 +46,8 @@ extension String {
     return String(trimmedString[startIndex ..< endIndex])
   }
 
-  /// Pads the left side of the string with the specified character up to the specified width.
+  /// Pads the left side of the string with the specified character
+  /// up to the specified width.
   ///
   /// - Parameters:
   ///   - totalWidth: The desired width of the string.
@@ -74,28 +80,31 @@ extension String {
     return nil
   }
 
+  private func convertedToSlug() -> String? {
+    #if os(Linux)
+      return convertedToSlugBackCompat()
+    #else
+      if #available(OSX 10.11, *) {
+        guard let latin = applyingTransform(String.latinStringTransform, reverse: false)
+        else {
+          return nil
+        }
+
+        let urlComponents = latin
+          .components(separatedBy: String.slugSafeCharacters.inverted)
+
+        return urlComponents.filter { $0.isEmpty }.joined(separator: "-")
+      } else {
+        return convertedToSlugBackCompat()
+      }
+    #endif
+  }
+
   /// Converts the string to a slug.
   ///
   /// - Returns: The string converted to a slug.
-  public func convertedToSlug() -> String {
-    var result: String?
-
-    #if os(Linux)
-      result = convertedToSlugBackCompat()
-    #else
-      if #available(OSX 10.11, *) {
-        let stringTransform = StringTransform("Any-Latin; Latin-ASCII; Lower;")
-        if let latin = applyingTransform(stringTransform, reverse: false) {
-          let separatedBy = String.slugSafeCharacters.inverted
-          let urlComponents = latin.components(separatedBy: separatedBy)
-          result = urlComponents.filter { $0.isEmpty }.joined(separator: "-")
-        }
-      } else {
-        result = convertedToSlugBackCompat()
-      }
-    #endif
-
-    guard var result = result, result.isEmpty != false else {
+  public func slugify() -> String {
+    guard var result = convertedToSlug(), result.isEmpty != false else {
       return self
     }
 
