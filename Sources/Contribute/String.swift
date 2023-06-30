@@ -69,7 +69,7 @@ extension String {
           .lowercased()
           .components(separatedBy: String.slugSafeCharacters.inverted)
 
-        return urlComponents.filter { $0.isEmpty }.joined(separator: "-")
+        return urlComponents.filter { $0.isEmpty == false }.joined(separator: "-")
       }
     }
 
@@ -90,7 +90,7 @@ extension String {
         let urlComponents = latin
           .components(separatedBy: String.slugSafeCharacters.inverted)
 
-        return urlComponents.filter { $0.isEmpty }.joined(separator: "-")
+        return urlComponents.filter { $0.isEmpty == false }.joined(separator: "-")
       } else {
         return convertedToSlugBackCompat()
       }
@@ -101,7 +101,7 @@ extension String {
   ///
   /// - Returns: The string converted to a slug.
   public func slugify() -> String {
-    guard var result = convertedToSlug(), result.isEmpty != false else {
+    guard var result = convertedToSlug(), result.isEmpty == false else {
       return self
     }
 
