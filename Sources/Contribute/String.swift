@@ -1,6 +1,5 @@
 import Foundation
 
-@available(*, deprecated)
 extension String {
   private static let quotes = ["\"", "'"]
 
@@ -28,7 +27,8 @@ extension String {
     let trimmedString = trimmingCharacters(in: .whitespacesAndNewlines)
     guard
       let first = trimmedString.first.map(String.init),
-      let last = trimmedString.last.map(String.init), trimmedString.count > 1,
+      let last = trimmedString.last.map(String.init),
+      !trimmedString.isEmpty,
       last == first
     else {
       return trimmedString
