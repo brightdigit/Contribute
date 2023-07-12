@@ -28,7 +28,7 @@ extension String {
     guard
       let first = trimmedString.first.map(String.init),
       let last = trimmedString.last.map(String.init),
-      !trimmedString.isEmpty,
+      trimmedString.count > 1,
       last == first
     else {
       return trimmedString
