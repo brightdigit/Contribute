@@ -5,6 +5,7 @@ import Foundation
   import FoundationNetworking
 #endif
 
+// TODO: Update this description
 /// A struct that downloads files from URLs using the `URLSession` class.
 public struct FileURLDownloader: URLDownloader {
   private let session: URLSession
@@ -28,6 +29,31 @@ public struct FileURLDownloader: URLDownloader {
   ///   - allowOverwrite: Whether to overwrite the destination file if it already exists.
   ///   - completion: A completion handler that is called with the error, if any.
   public func download(
+    from fromURL: URL,
+    to toURL: URL,
+    allowOverwrite: Bool,
+    _ completion: @escaping (Error?) -> Void
+  ) {
+    guard toURL.isFileURL else {
+      downloadFromNetwork(
+        from: fromURL,
+        to: toURL,
+        allowOverwrite: allowOverwrite,
+        completion
+      )
+
+      return
+    }
+
+    downloadFromLocal(
+      from: fromURL,
+      to: toURL,
+      allowOverwrite: allowOverwrite,
+      completion
+    )
+  }
+
+  private func downloadFromNetwork(
     from fromURL: URL,
     to toURL: URL,
     allowOverwrite: Bool,
@@ -62,5 +88,36 @@ public struct FileURLDownloader: URLDownloader {
     }
 
     task.resume()
+  }
+
+  private func downloadFromLocal(
+    from fromURL: URL,
+    to toURL: URL,
+    allowOverwrite: Bool,
+    _ completion: @escaping (Error?) -> Void
+  ) {
+    do {
+      // Create directory for the destination URL.
+      try self.fileManager.createDirectory(
+        at: toURL.deletingLastPathComponent(),
+        withIntermediateDirectories: true,
+        attributes: nil
+      )
+
+      let fileExists = fileManager.fileExists(atPath: toURL.path)
+
+      // Check if the destination file already exists so to overwrite it,
+      // Otherwise just write the sourceURL at the give destination URL.
+
+      if !fileExists {
+        try fileManager.copyItem(at: fromURL, to: toURL)
+      } else if allowOverwrite {
+        _ = try fileManager.replaceItemAt(toURL, withItemAt: fromURL)
+      }
+
+      completion(nil)
+    } catch {
+      completion(error)
+    }
   }
 }
