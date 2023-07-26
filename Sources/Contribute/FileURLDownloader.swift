@@ -34,23 +34,22 @@ public struct FileURLDownloader: URLDownloader {
     allowOverwrite: Bool,
     _ completion: @escaping (Error?) -> Void
   ) {
-    guard toURL.isFileURL else {
-      downloadFromNetwork(
+    if toURL.isFileURL {
+      downloadFromLocal(
         from: fromURL,
         to: toURL,
         allowOverwrite: allowOverwrite,
         completion
       )
 
-      return
+    } else {
+      downloadFromNetwork(
+        from: fromURL,
+        to: toURL,
+        allowOverwrite: allowOverwrite,
+        completion
+      )
     }
-
-    downloadFromLocal(
-      from: fromURL,
-      to: toURL,
-      allowOverwrite: allowOverwrite,
-      completion
-    )
   }
 
   private func downloadFromNetwork(
@@ -72,16 +71,18 @@ public struct FileURLDownloader: URLDownloader {
           attributes: nil
         )
 
-        let fileExists = fileManager.fileExists(atPath: toURL.path)
-
         // Check if the destination file already exists so to overwrite it,
         // Otherwise just write the sourceURL at the give destination URL.
+        let fileExists = fileManager.fileExists(atPath: toURL.path)
 
         if !fileExists {
           try fileManager.copyItem(at: sourceURL, to: toURL)
-        } else if allowOverwrite {
-          _ = try fileManager.replaceItemAt(toURL, withItemAt: sourceURL)
+
+        } else if fileExists && allowOverwrite {
+          try fileManager.removeItem(at: toURL)
+          try fileManager.copyItem(at: fromURL, to: toURL)
         }
+
       } catch {
         completion(error)
       }
@@ -111,8 +112,10 @@ public struct FileURLDownloader: URLDownloader {
 
       if !fileExists {
         try fileManager.copyItem(at: fromURL, to: toURL)
-      } else if allowOverwrite {
-        _ = try fileManager.replaceItemAt(toURL, withItemAt: fromURL)
+
+      } else if allowOverwrite && fileExists {
+        try fileManager.removeItem(at: toURL)
+        try fileManager.copyItem(at: fromURL, to: toURL)
       }
 
       completion(nil)
