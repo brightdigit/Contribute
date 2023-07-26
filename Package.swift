@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "Contribute",
-  platforms: [.macOS(.v12)],
+  platforms: [.macOS(.v13)],
   products: [
     .library(
       name: "Contribute",
