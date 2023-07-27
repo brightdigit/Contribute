@@ -41,7 +41,6 @@ public struct FileURLDownloader: URLDownloader {
         allowOverwrite: allowOverwrite,
         completion
       )
-
     } else {
       downloadFromNetwork(
         from: fromURL,
@@ -77,12 +76,10 @@ public struct FileURLDownloader: URLDownloader {
 
         if !fileExists {
           try fileManager.copyItem(at: sourceURL, to: toURL)
-
-        } else if fileExists && allowOverwrite {
+        } else if fileExists, allowOverwrite {
           try fileManager.removeItem(at: toURL)
           try fileManager.copyItem(at: fromURL, to: toURL)
         }
-
       } catch {
         completion(error)
       }
@@ -99,7 +96,7 @@ public struct FileURLDownloader: URLDownloader {
   ) {
     do {
       // Create directory for the destination URL.
-      try self.fileManager.createDirectory(
+      try fileManager.createDirectory(
         at: toURL.deletingLastPathComponent(),
         withIntermediateDirectories: true,
         attributes: nil
@@ -112,8 +109,7 @@ public struct FileURLDownloader: URLDownloader {
 
       if !fileExists {
         try fileManager.copyItem(at: fromURL, to: toURL)
-
-      } else if allowOverwrite && fileExists {
+      } else if allowOverwrite, fileExists {
         try fileManager.removeItem(at: toURL)
         try fileManager.copyItem(at: fromURL, to: toURL)
       }
