@@ -67,6 +67,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
+          files: ${{join(fromJSON(steps.coverage-files.outputs.files), ',')}}
           flags: spm,swift-${{ matrix.swift-version }}
           token: ${{ secrets.CODECOV_TOKEN }}
   build-macos:
