@@ -81,19 +81,15 @@ extension String {
     #if os(Linux)
       return convertedToSlugBackCompat()
     #else
-      if #available(OSX 10.11, *) {
-        guard let latin = applyingTransform(String.latinStringTransform, reverse: false)
-        else {
-          return nil
-        }
-
-        let urlComponents = latin
-          .components(separatedBy: String.slugSafeCharacters.inverted)
-
-        return urlComponents.filter { $0.isEmpty == false }.joined(separator: "-")
-      } else {
-        return convertedToSlugBackCompat()
+      guard let latin = applyingTransform(String.latinStringTransform, reverse: false)
+      else {
+        return nil
       }
+
+      let urlComponents = latin
+        .components(separatedBy: String.slugSafeCharacters.inverted)
+
+      return urlComponents.filter { $0.isEmpty == false }.joined(separator: "-")
     #endif
   }
 
