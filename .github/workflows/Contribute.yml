@@ -61,9 +61,10 @@ jobs:
       - name: Test
         run: swift test --enable-code-coverage
       - uses: sersoft-gmbh/swift-coverage-action@v3
+        id: coverage-files
         with:
           fail-on-empty-output: true
-      - name: Upload package coverage to Codecov
+      - name: Upload SPM coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
