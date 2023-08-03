@@ -12,10 +12,6 @@ public struct PandocMarkdownGenerator: MarkdownGenerator {
     self.shellOut = shellOut
     self.temporaryFile = temporaryFile
   }
-//
-//  public static func defaultShellOut(to command: String, arguments: [String]) throws -> String {
-//    try ShellOut.shellOut(to: command, arguments: arguments)
-//  }
 
   let shellOut: (String, [String]) throws -> String
   let temporaryFile: (String) throws -> URL
