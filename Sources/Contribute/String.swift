@@ -59,23 +59,25 @@ extension String {
     return "".padding(toLength: toPad, withPad: byString, startingAt: 0) + self
   }
 
-  private func convertedToSlugBackCompat() -> String? {
-    // On Linux StringTransform doesn't exist and CFStringTransform causes all sorts
-    // of problems because of bridging issues using CFMutableString – d'oh.
-    // So we're going to do the only thing possible: dump to ASCII and hope for the best
-    if let data = data(using: .ascii, allowLossyConversion: true) {
-      if let str = String(data: data, encoding: .ascii) {
-        let urlComponents = str
-          .lowercased()
-          .components(separatedBy: String.slugSafeCharacters.inverted)
+  #if os(Linux)
+    private func convertedToSlugBackCompat() -> String? {
+      // On Linux StringTransform doesn't exist and CFStringTransform causes all sorts
+      // of problems because of bridging issues using CFMutableString – d'oh.
+      // So we're going to do the only thing possible: dump to ASCII and hope for the best
+      if let data = data(using: .ascii, allowLossyConversion: true) {
+        if let str = String(data: data, encoding: .ascii) {
+          let urlComponents = str
+            .lowercased()
+            .components(separatedBy: String.slugSafeCharacters.inverted)
 
-        return urlComponents.filter { $0.isEmpty == false }.joined(separator: "-")
+          return urlComponents.filter { $0.isEmpty == false }.joined(separator: "-")
+        }
       }
-    }
 
-    // still here? Something went disastrously wrong!
-    return nil
-  }
+      // still here? Something went disastrously wrong!
+      return nil
+    }
+  #endif
 
   private func convertedToSlug() -> String? {
     #if os(Linux)

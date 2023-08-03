@@ -18,7 +18,10 @@ public struct PandocMarkdownGenerator: MarkdownGenerator {
   let pandocPath = ProcessInfo.processInfo.environment["PANDOC_PATH"] ?? "$(which pandoc)"
 
   public enum Temporary {
-    static let temporaryDirURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+    static let temporaryDirURL = URL(
+      fileURLWithPath: NSTemporaryDirectory(),
+      isDirectory: true
+    )
 
     public static func file(fromContent content: String) throws -> URL {
       let temporaryFileURL = temporaryDirURL.appendingPathComponent(UUID().uuidString)
