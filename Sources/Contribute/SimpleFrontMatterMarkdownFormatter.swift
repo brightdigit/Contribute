@@ -6,7 +6,7 @@ import Foundation
 
 /// A simple formatter implementation for front matter and markdown together.
 ///
-/// ```plain
+/// ```md
 /// ---
 /// title: WWDC 2018 - What Does It Mean For Businesses?
 /// date: 2018-08-14 00:00

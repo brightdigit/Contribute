@@ -5,8 +5,7 @@ import Foundation
   import FoundationNetworking
 #endif
 
-// TODO: Update this description
-/// A struct that downloads files from URLs using the `URLSession` class.
+/// A struct that downloads files from URLs using the `URLSession` class, or .
 public struct FileURLDownloader: URLDownloader {
   private let session: URLSession
   private let fileManager: FileManager
@@ -62,27 +61,12 @@ public struct FileURLDownloader: URLDownloader {
         return completion(error)
       }
 
-      do {
-        // Create directory for the destination URL.
-        try self.fileManager.createDirectory(
-          at: toURL.deletingLastPathComponent(),
-          withIntermediateDirectories: true,
-          attributes: nil
-        )
-
-        // Check if the destination file already exists so to overwrite it,
-        // Otherwise just write the sourceURL at the give destination URL.
-        let fileExists = fileManager.fileExists(atPath: toURL.path)
-
-        if !fileExists {
-          try fileManager.copyItem(at: sourceURL, to: toURL)
-        } else if fileExists, allowOverwrite {
-          try fileManager.removeItem(at: toURL)
-          try fileManager.copyItem(at: fromURL, to: toURL)
-        }
-      } catch {
-        completion(error)
-      }
+      downloadFromLocal(
+        from: sourceURL,
+        to: toURL,
+        allowOverwrite: allowOverwrite,
+        completion
+      )
     }
 
     task.resume()

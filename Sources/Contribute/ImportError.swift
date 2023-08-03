@@ -4,7 +4,6 @@ import Foundation
 public enum ImportError: Error {
   case directory(URL)
   case imageDownloads([URL: Error])
-  case assetDownloads([URL: Error])
   case invalidPodcastEpisodeFromRSSItem(Any)
   case invalidRSS(URL)
   case apiError(Error)
