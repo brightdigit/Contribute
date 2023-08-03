@@ -6,6 +6,7 @@ public struct HTMLtoMarkdown: MarkdownGenerator {
   public let markdownFromHTML: (String) throws -> String
 
   /// Creates a ``MarkdownGenerator`` based on a closure
+  /// 
   /// - Parameter markdownFromHTML: The closure which returns Markdown from HTML.
   public init(_ markdownFromHTML: @escaping (String) throws -> String) {
     self.markdownFromHTML = markdownFromHTML
