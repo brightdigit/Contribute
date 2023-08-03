@@ -13,7 +13,6 @@ public protocol URLDownloader {
   ///   - toURL: The destination URL for the content.
   ///   - allowOverwrite: Whether to overwrite the destination URL if it already exists.
   ///   - completion: A completion handler that is called with the error, if any.
-  @available(*, deprecated)
   func download(
     from fromURL: URL,
     to toURL: URL,
