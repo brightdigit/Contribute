@@ -9,8 +9,7 @@ public protocol BasicContentURLGenerator: ContentURLGenerator {
 }
 
 extension BasicContentURLGenerator {
-  /// A default implementation that returns the destination URL for the given source data
-  /// with markdown extension.
+  /// Returns a default destination URL for the given markdown source data.
   public func destinationURL(
     from source: SourceType, atContentPathURL contentPathURL: URL
   ) -> URL {
