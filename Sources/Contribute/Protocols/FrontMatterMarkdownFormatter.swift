@@ -9,8 +9,3 @@ public protocol FrontMatterMarkdownFormatter {
   /// - Returns: The formatted string.
   func format(frontMatterText: String, withMarkdown markdownText: String) -> String
 }
-
-extension FrontMatterMarkdownFormatter where Self == SimpleFrontMatterMarkdownFormatter {
-  /// A static property that returns a `SimpleFrontMatterMarkdownFormatter` instance.
-  public static var simple: SimpleFrontMatterMarkdownFormatter { .init() }
-}

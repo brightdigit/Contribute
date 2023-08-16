@@ -1,14 +1,14 @@
-import XCTest
+// swiftlint:disable line_length
 @testable import Contribute
+import XCTest
 
 internal final class HTMLtoMarkdownTests: XCTestCase {
-
   private enum MarkdownGeneratorError: Error {
     case invalidHtmlString
   }
 
   internal func testPassthroughMarkdownGenerator() throws {
-    let generator = HTMLtoMarkdown({ $0 })
+    let generator = HTMLtoMarkdown { $0 }
 
     let html = "<b>Sample Html</b>"
     let expectedMarkdown = html
@@ -18,13 +18,13 @@ internal final class HTMLtoMarkdownTests: XCTestCase {
   }
 
   internal func testInvalidHtmlStringShouldThrowExpection() {
-    let generator = HTMLtoMarkdown({
+    let generator = HTMLtoMarkdown {
       if try self.isValidHtmlString($0) {
         throw MarkdownGeneratorError.invalidHtmlString
       } else {
         return $0
       }
-    })
+    }
 
     let html = "<bInvalid Html String<"
 
@@ -34,14 +34,14 @@ internal final class HTMLtoMarkdownTests: XCTestCase {
   // MARK: - Helpers
 
   private func isValidHtmlString(_ htmlString: String) throws -> Bool {
-    return try NSRegularExpression(
+    try NSRegularExpression(
       pattern: "(<script(\\s|\\S)*?<\\/script>)|(<style(\\s|\\S)*?<\\/style>)|(<!--(\\s|\\S)*?-->)|(<\\/?(\\s|\\S)*?>)",
       options: []
     )
-      .matches(
-        in: htmlString,
-        range: NSRange(htmlString.startIndex..., in: htmlString)
-      )
-      .count == 0
+    .matches(
+      in: htmlString,
+      range: NSRange(htmlString.startIndex..., in: htmlString)
+    )
+    .isEmpty
   }
 }
