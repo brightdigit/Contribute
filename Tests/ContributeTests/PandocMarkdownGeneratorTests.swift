@@ -8,9 +8,9 @@
 import XCTest
 @testable import Contribute
 
-final class PandocMarkdownGeneratorTests: XCTestCase {
+internal final class PandocMarkdownGeneratorTests: XCTestCase {
 
-  func testSuccessfulMarkdownGeneration() throws {
+  internal func testSuccessfulMarkdownGeneration() throws {
     var isCalled: Bool?
     let sut = PandocMarkdownGenerator { _,_  in
       isCalled = true
@@ -22,7 +22,7 @@ final class PandocMarkdownGeneratorTests: XCTestCase {
     XCTAssertEqual(isCalled, true)
   }
 
-  func testFailedMarkdownGeneration() throws {
+  internal func testFailedMarkdownGeneration() throws {
     let sut = PandocMarkdownGenerator { _,_  in
       throw testError
     }
