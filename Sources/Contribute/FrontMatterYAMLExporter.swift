@@ -14,18 +14,25 @@ public struct FrontMatterYAMLExporter<
   private let translator: FrontMatterTranslatorType
 
   /// The YAML formatter to use.
-  private let formatter: FrontMatterFormatter = {
-    let encoder = YAMLEncoder()
-    encoder.options = .init(width: -1, allowUnicode: true)
-    return encoder
-  }()
+  private let formatter: FrontMatterFormatter
 
   /// Initialize a new instance of `FrontMatterYAMLExporter`.
   ///
-  /// - Parameter translator: The front matter translator for translating front
+  /// - Parameters:
+  ///   - translator: The front matter translator for translating front
   ///   matter from a source data.
-  public init(translator: FrontMatterTranslatorType) {
+  ///   - formatter: The formatter used to format the output of the translator
+  ///   into YAML string.
+  public init(
+    translator: FrontMatterTranslatorType,
+    formatter: FrontMatterFormatter = {
+      let encoder = YAMLEncoder()
+      encoder.options = .init(width: -1, allowUnicode: true)
+      return encoder
+    }()
+  ) {
     self.translator = translator
+    self.formatter = formatter
   }
 
   /// Exports the front matter text in YAML format from the given source data.

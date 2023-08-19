@@ -1,8 +1,5 @@
-import Foundation
+import Contribute
 
-struct MockSource {
-  let title: String
-  let date: String
-  let description: String
-  let featuredImage: String
+struct MockSource: HTMLSource {
+  var html: String { "<html />" }
 }
