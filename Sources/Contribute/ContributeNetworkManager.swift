@@ -1,5 +1,9 @@
 import Foundation
 
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
+#endif
+
 public final class ContributeNetworkManager: URLNetworkManager {
   private let session: URLSession = .shared
 
