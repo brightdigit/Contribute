@@ -7,16 +7,19 @@ import Foundation
 
 /// A struct that downloads files from URLs using the `URLSession` class, or .
 public struct FileURLDownloader: URLDownloader {
-  private let session: URLSession
-  private let fileManager: FileManager
+  private let networkManager: URLNetworkManager
+  private let fileManager: URLFileManager
 
   /// Initializes the downloader with the given `URLSession` and `FileManager` instances.
   ///
   /// - Parameters:
   ///   - session: The `URLSession` instance to use for downloading files.
   ///   - fileManager: The `FileManager` instance to use for saving downloaded files.
-  public init(session: URLSession = .shared, fileManager: FileManager = .default) {
-    self.session = session
+  public init(
+    networkManager: URLNetworkManager = ContributeNetworkManager(),
+    fileManager: URLFileManager = ContributeFileManager()
+  ) {
+    self.networkManager = networkManager
     self.fileManager = fileManager
   }
 
@@ -33,7 +36,7 @@ public struct FileURLDownloader: URLDownloader {
     allowOverwrite: Bool,
     _ completion: @escaping (Error?) -> Void
   ) {
-    if toURL.isFileURL {
+    if fromURL.isFileURL {
       downloadFromLocal(
         from: fromURL,
         to: toURL,
@@ -56,7 +59,7 @@ public struct FileURLDownloader: URLDownloader {
     allowOverwrite: Bool,
     _ completion: @escaping (Error?) -> Void
   ) {
-    let task = session.downloadTask(with: fromURL) { destination, _, error in
+    _ = networkManager.download(fromURL: fromURL) { destination, _, error in
       guard let sourceURL = destination else {
         return completion(error)
       }
@@ -68,8 +71,6 @@ public struct FileURLDownloader: URLDownloader {
         completion
       )
     }
-
-    task.resume()
   }
 
   private func downloadFromLocal(
@@ -80,11 +81,7 @@ public struct FileURLDownloader: URLDownloader {
   ) {
     do {
       // Create directory for the destination URL.
-      try fileManager.createDirectory(
-        at: toURL.deletingLastPathComponent(),
-        withIntermediateDirectories: true,
-        attributes: nil
-      )
+      try fileManager.createDirectory(at: toURL.deletingLastPathComponent())
 
       let fileExists = fileManager.fileExists(atPath: toURL.path)
 

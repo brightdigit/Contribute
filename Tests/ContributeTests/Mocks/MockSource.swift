@@ -1,5 +1,5 @@
 import Contribute
 
-struct MockSource: HTMLSource {
+internal struct MockSource: HTMLSource {
   var html: String { "<html />" }
 }
