@@ -6,30 +6,55 @@
 //
 
 import XCTest
+@testable import Contribute
 
-final class MarkdownContentYAMLBuilderTests: XCTestCase {
+internal final class MarkdownContentYAMLBuilderTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
+  internal func testSuccessfulYAMLBuild() throws {
+    let exporter = FrontMatterExporterSuccessfulSpy()
+    let extractor = MarkdownExtractorSuccessfulSpy()
+    let sut = MarkdownContentYAMLBuilder<
+      MockSource,
+      MarkdownExtractorSuccessfulSpy,
+      FrontMatterExporterSuccessfulSpy
+    >(
+      frontMatterExporter: exporter,
+      markdownExtractor: extractor
+    )
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
+    _ = try sut.content(from: .init(), using: { $0 })
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
+    XCTAssertEqual(exporter.isCalled, true)
+  }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+  internal func testFailedFrontMatterExport() throws {
+    let exporter = FrontMatterExporterFailedSpy()
+    let extractor = MarkdownExtractorSuccessfulSpy()
+    let sut = MarkdownContentYAMLBuilder<
+      MockSource,
+      MarkdownExtractorSuccessfulSpy,
+      FrontMatterExporterFailedSpy
+    >(
+      frontMatterExporter: exporter,
+      markdownExtractor: extractor
+    )
+
+    XCTAssertThrowsError(try sut.content(from: .init(), using: { $0 }))
+  }
+
+  internal func testFailedMarkdownExtract() throws {
+    let exporter = FrontMatterExporterSuccessfulSpy()
+    let extractor = MarkdownExtractorFailedSpy()
+    let sut = MarkdownContentYAMLBuilder<
+      MockSource,
+      MarkdownExtractorFailedSpy,
+      FrontMatterExporterSuccessfulSpy
+    >(
+      frontMatterExporter: exporter,
+      markdownExtractor: extractor
+    )
+
+    XCTAssertThrowsError(try sut.content(from: .init(), using: { $0 }))
+  }
 
 }

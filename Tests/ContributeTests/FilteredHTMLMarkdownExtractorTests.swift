@@ -3,7 +3,7 @@ import XCTest
 
 internal final class FilteredHTMLMarkdownExtractorTests: XCTestCase {
 
-  internal func testSuccessfulHtmlExtraction() throws {
+  internal func testSuccessfulHtmlExtract() throws {
     let sut = FilteredHTMLMarkdownExtractor<MockSource>()
 
     var isCalled: Bool?
@@ -16,7 +16,7 @@ internal final class FilteredHTMLMarkdownExtractorTests: XCTestCase {
     XCTAssertEqual(isCalled, true)
   }
 
-  func testFailedHtmlExtraction() throws {
+  func testFailedHtmlExtract() throws {
     let sut = FilteredHTMLMarkdownExtractor<MockSource>()
 
     XCTAssertThrowsError(

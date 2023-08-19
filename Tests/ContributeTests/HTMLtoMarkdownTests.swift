@@ -7,7 +7,7 @@ internal final class HTMLtoMarkdownTests: XCTestCase {
     case invalidHtmlString
   }
 
-  internal func testSuccessfulMarkdownGeneration() throws {
+  internal func testSuccessfulMarkdownGenerate() throws {
     var isCalled: Bool?
     let sut = HTMLtoMarkdown { _ in
       isCalled = true
@@ -19,7 +19,7 @@ internal final class HTMLtoMarkdownTests: XCTestCase {
     XCTAssertEqual(isCalled, true)
   }
 
-  internal func testFailedMarkdownGeneration() throws {
+  internal func testFailedMarkdownGenerate() throws {
     let sut = HTMLtoMarkdown { _ in
       throw testError
     }

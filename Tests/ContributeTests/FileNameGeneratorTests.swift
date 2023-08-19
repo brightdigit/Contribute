@@ -3,7 +3,7 @@ import XCTest
 
 final class FileNameGeneratorTests: XCTestCase {
 
-  func testFileNameGeneration() {
+  func testFileNameGenerate() {
     var isCalled: Bool?
     let sut = FileNameGenerator<MockSource> { source in
       isCalled = true
