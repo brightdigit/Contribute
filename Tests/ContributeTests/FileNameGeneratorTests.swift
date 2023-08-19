@@ -10,7 +10,7 @@ final class FileNameGeneratorTests: XCTestCase {
       return "result"
     }
 
-    _ = sut.fileNameWithoutExtensionFromSource(.init())
+    _ = sut.destinationURL(from: .init(), atContentPathURL: .temporaryDirURL)
 
     XCTAssertEqual(isCalled, true)
   }
