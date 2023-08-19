@@ -1,6 +1,9 @@
 import Foundation
 import Contribute
-import XCTest
+
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
+#endif
 
 internal final class DumpNetworkManager: URLNetworkManager {
   func download(fromURL: URL, completion: @escaping (URL?, URLResponse?, Error?) -> Void) {
@@ -13,7 +16,11 @@ internal final class NetworkManagerSuccessfulSpy: URLNetworkManager {
     fromURL: URL,
     completion: @escaping @Sendable (URL?, URLResponse?, Error?) -> Void
   ) {
-    completion(.temporaryDirURL, .init(), nil)
+    completion(
+      .temporaryDirURL,
+      HTTPURLResponse(url: fromURL, statusCode: 200, httpVersion: nil, headerFields: nil),
+      nil
+    )
   }
 }
 
