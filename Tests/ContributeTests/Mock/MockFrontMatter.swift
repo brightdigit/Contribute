@@ -1,3 +1,3 @@
 import Foundation
 
-internal struct MockFrontMatter: Codable { }
+internal struct MockFrontMatter: Codable {}

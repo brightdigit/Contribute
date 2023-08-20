@@ -1,5 +1,5 @@
-import Foundation
 import Contribute
+import Foundation
 
 internal final class FrontMatterExporterSpy: FrontMatterExporter {
   internal static var success: Self { .init(.success(true)) }
@@ -11,11 +11,11 @@ internal final class FrontMatterExporterSpy: FrontMatterExporter {
     self.result = result
   }
 
-  internal func frontMatterText(from source: MockSource) throws -> String {
+  internal func frontMatterText(from _: MockSource) throws -> String {
     switch result {
     case .success:
       return "front-matter"
-    case .failure(let failure):
+    case let .failure(failure):
       throw failure
     }
   }

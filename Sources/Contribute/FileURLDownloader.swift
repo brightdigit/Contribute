@@ -7,8 +7,8 @@ import Foundation
 
 /// A struct that downloads files from URLs using the `URLSession` class, or .
 public struct FileURLDownloader: URLDownloader {
-  private let networkManager: URLNetworkManager
-  private let fileManager: URLFileManager
+  private let networkManager: URLSessionable
+  private let fileManager: FileManagerProtocol
 
   /// Initializes the downloader with the given `URLSession` and `FileManager` instances.
   ///
@@ -16,8 +16,8 @@ public struct FileURLDownloader: URLDownloader {
   ///   - session: The `URLSession` instance to use for downloading files.
   ///   - fileManager: The `FileManager` instance to use for saving downloaded files.
   public init(
-    networkManager: URLNetworkManager = ContributeNetworkManager(),
-    fileManager: URLFileManager = ContributeFileManager()
+    networkManager: URLSessionable = URLSession.shared,
+    fileManager: FileManagerProtocol = FileManager.default
   ) {
     self.networkManager = networkManager
     self.fileManager = fileManager

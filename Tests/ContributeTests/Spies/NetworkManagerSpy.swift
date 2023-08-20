@@ -1,11 +1,11 @@
-import Foundation
 import Contribute
+import Foundation
 
 #if canImport(FoundationNetworking)
   import FoundationNetworking
 #endif
 
-internal final class NetworkManagerSpy: URLNetworkManager {
+internal final class NetworkManagerSpy: URLSessionable {
   internal static var success: Self { .init(.success(true)) }
   internal static var failure: Self { .init(.failure(.networkDownload)) }
 
@@ -17,7 +17,7 @@ internal final class NetworkManagerSpy: URLNetworkManager {
 
   internal func download(
     fromURL: URL,
-    completion: @escaping @Sendable (URL?, URLResponse?, Error?) -> Void
+    completion: @escaping @Sendable(URL?, URLResponse?, Error?) -> Void
   ) {
     switch result {
     case .success:
@@ -26,6 +26,7 @@ internal final class NetworkManagerSpy: URLNetworkManager {
         HTTPURLResponse(url: fromURL, statusCode: 200, httpVersion: nil, headerFields: nil),
         nil
       )
+
     case .failure:
       completion(nil, nil, TestError.networkDownload)
     }

@@ -1,5 +1,5 @@
-import Foundation
 import Contribute
+import Foundation
 
 internal final class MarkdownExtractorSpy: MarkdownExtractor {
   internal static var success: Self { .init(.success(true)) }
@@ -16,13 +16,13 @@ internal final class MarkdownExtractorSpy: MarkdownExtractor {
   }
 
   internal func markdown(
-    from source: MockSource,
-    using htmlToMarkdown: @escaping (String) throws -> String
+    from _: MockSource,
+    using _: @escaping (String) throws -> String
   ) throws -> String {
     switch result {
     case .success:
       return "**markdown**"
-    case .failure(let failure):
+    case let .failure(failure):
       throw failure
     }
   }

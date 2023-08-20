@@ -1,8 +1,7 @@
-import XCTest
 @testable import Contribute
+import XCTest
 
 internal final class FileURLDownloaderTests: XCTestCase {
-
   internal func testSuccessfulNetworkCall() {
     let networkManager = NetworkManagerSpy.success
     let fileManager = FileManagerSpy()
@@ -64,8 +63,7 @@ internal final class FileURLDownloaderTests: XCTestCase {
     sut.download(
       from: .temporaryDirURL,
       to: .temporaryDirURL,
-      allowOverwrite: true,
-      { _ in }
+      allowOverwrite: true, { _ in }
     )
 
     XCTAssertEqual(isCalled, true)
@@ -112,8 +110,7 @@ internal final class FileURLDownloaderTests: XCTestCase {
     sut.download(
       from: .temporaryDirURL,
       to: .temporaryDirURL,
-      allowOverwrite: true,
-      { _ in }
+      allowOverwrite: true, { _ in }
     )
 
     XCTAssertEqual(isCalled, true)
@@ -134,8 +131,7 @@ internal final class FileURLDownloaderTests: XCTestCase {
     sut.download(
       from: .temporaryDirURL,
       to: .temporaryDirURL,
-      allowOverwrite: true,
-      { _ in }
+      allowOverwrite: true, { _ in }
     )
 
     XCTAssertEqual(isCalled, true)
@@ -183,8 +179,7 @@ internal final class FileURLDownloaderTests: XCTestCase {
     sut.download(
       from: .temporaryDirURL,
       to: .temporaryDirURL,
-      allowOverwrite: true,
-      { _ in }
+      allowOverwrite: true, { _ in }
     )
 
     XCTAssertEqual(isCalled, true)
@@ -217,5 +212,4 @@ internal final class FileURLDownloaderTests: XCTestCase {
 
     wait(for: [expectation], timeout: 0.100)
   }
-
 }

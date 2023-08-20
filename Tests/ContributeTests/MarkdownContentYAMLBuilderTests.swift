@@ -1,15 +1,7 @@
-//
-//  MarkdownContentYAMLBuilderTests.swift
-//  
-//
-//  Created by Ahmed Shendy on 19/08/2023.
-//
-
-import XCTest
 @testable import Contribute
+import XCTest
 
 internal final class MarkdownContentYAMLBuilderTests: XCTestCase {
-
   internal func testSuccessfulYAMLBuild() throws {
     let exporter = FrontMatterExporterSpy.success
     let extractor = MarkdownExtractorSpy.success
@@ -25,10 +17,8 @@ internal final class MarkdownContentYAMLBuilderTests: XCTestCase {
 
     let sut = MarkdownContentYAMLBuilder(frontMatterExporter: exporter, markdownExtractor: extractor)
 
-    assertThrows(
-      { try sut.content(from: .init(), using: { $0 }) },
-      expectedError: .frontMatterExport
-    )
+    assertThrows({ try sut.content(from: .init(), using: { $0 }) },
+                 expectedError: .frontMatterExport)
   }
 
   internal func testFailedMarkdownExtract() throws {
@@ -37,10 +27,7 @@ internal final class MarkdownContentYAMLBuilderTests: XCTestCase {
 
     let sut = MarkdownContentYAMLBuilder(frontMatterExporter: exporter, markdownExtractor: extractor)
 
-    assertThrows(
-      { try sut.content(from: .init(), using: { $0 }) },
-      expectedError: .markdownExtract
-    )
+    assertThrows({ try sut.content(from: .init(), using: { $0 }) },
+                 expectedError: .markdownExtract)
   }
-
 }

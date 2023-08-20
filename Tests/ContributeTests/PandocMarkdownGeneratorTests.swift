@@ -1,29 +1,21 @@
-//
-//  PandocMarkdownGeneratorTests.swift
-//  
-//
-//  Created by Ahmed Shendy on 19/08/2023.
-//
-
-import XCTest
 @testable import Contribute
+import XCTest
 
 internal final class PandocMarkdownGeneratorTests: XCTestCase {
-
   internal func testSuccessfulMarkdownGenerate() throws {
     var isCalled: Bool?
-    let sut = PandocMarkdownGenerator { _,_  in
+    let sut = PandocMarkdownGenerator { _, _ in
       isCalled = true
       return "result"
     }
 
-    let _ = try sut.markdown(fromHTML: "<html />")
+    _ = try sut.markdown(fromHTML: "<html />")
 
     XCTAssertEqual(isCalled, true)
   }
 
   internal func testFailedMarkdownGenerate() throws {
-    let sut = PandocMarkdownGenerator { _,_  in
+    let sut = PandocMarkdownGenerator { _, _ in
       throw TestError.markdownGenerate
     }
 
@@ -35,5 +27,4 @@ internal final class PandocMarkdownGeneratorTests: XCTestCase {
       }
     }
   }
-
 }

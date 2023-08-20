@@ -1,8 +1,7 @@
-import XCTest
 @testable import Contribute
+import XCTest
 
 internal final class FilteredHTMLMarkdownExtractorTests: XCTestCase {
-
   internal func testSuccessfulHtmlExtract() throws {
     let sut = FilteredHTMLMarkdownExtractor<MockSource>()
 
@@ -31,5 +30,4 @@ internal final class FilteredHTMLMarkdownExtractorTests: XCTestCase {
       }
     }
   }
-
 }

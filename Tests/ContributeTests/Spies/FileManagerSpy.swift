@@ -1,7 +1,7 @@
-import Foundation
 import Contribute
+import Foundation
 
-internal final class FileManagerSpy: URLFileManager {
+internal final class FileManagerSpy: FileManagerProtocol {
   private var createDirectory: (URL) throws -> Void
   private var fileExists: (String) -> Bool
   private var copyItem: (URL, URL) throws -> Void

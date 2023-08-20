@@ -1,15 +1,13 @@
-import XCTest
 @testable import Contribute
+import XCTest
 
 internal final class FrontMatterYAMLExporterTests: XCTestCase {
-
   internal func testFrontMatterTranslatedFromSource() throws {
     let translator = FrontMatterTranslatorSpy()
     let sut = FrontMatterYAMLExporter(translator: translator)
 
-    let _ = try sut.frontMatterText(from: .init())
+    _ = try sut.frontMatterText(from: .init())
 
     XCTAssertEqual(translator.isCalled, true)
   }
-
 }
