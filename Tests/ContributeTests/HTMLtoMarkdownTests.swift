@@ -21,9 +21,15 @@ internal final class HTMLtoMarkdownTests: XCTestCase {
 
   internal func testFailedMarkdownGenerate() throws {
     let sut = HTMLtoMarkdown { _ in
-      throw testError
+      throw TestError.markdownGenerate
     }
 
-    XCTAssertThrowsError(try sut.markdown(fromHTML: ""))
+    XCTAssertThrowsError(try sut.markdown(fromHTML: "")) { actualError in
+      guard let actualError = actualError as? TestError,
+            actualError == .markdownGenerate else {
+        XCTFail()
+        return
+      }
+    }
   }
 }

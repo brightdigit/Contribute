@@ -11,50 +11,36 @@ import XCTest
 internal final class MarkdownContentYAMLBuilderTests: XCTestCase {
 
   internal func testSuccessfulYAMLBuild() throws {
-    let exporter = FrontMatterExporterSuccessfulSpy()
-    let extractor = MarkdownExtractorSuccessfulSpy()
-    let sut = MarkdownContentYAMLBuilder<
-      MockSource,
-      MarkdownExtractorSuccessfulSpy,
-      FrontMatterExporterSuccessfulSpy
-    >(
-      frontMatterExporter: exporter,
-      markdownExtractor: extractor
-    )
+    let exporter = FrontMatterExporterSpy.success
+    let extractor = MarkdownExtractorSpy.success
 
-    _ = try sut.content(from: .init(), using: { $0 })
+    let sut = MarkdownContentYAMLBuilder(frontMatterExporter: exporter, markdownExtractor: extractor)
 
-    XCTAssertEqual(exporter.isCalled, true)
+    XCTAssertNoThrow(try sut.content(from: .init(), using: { $0 }))
   }
 
   internal func testFailedFrontMatterExport() throws {
-    let exporter = FrontMatterExporterFailedSpy()
-    let extractor = MarkdownExtractorSuccessfulSpy()
-    let sut = MarkdownContentYAMLBuilder<
-      MockSource,
-      MarkdownExtractorSuccessfulSpy,
-      FrontMatterExporterFailedSpy
-    >(
-      frontMatterExporter: exporter,
-      markdownExtractor: extractor
-    )
+    let exporter = FrontMatterExporterSpy.failure
+    let extractor = MarkdownExtractorSpy.success
 
-    XCTAssertThrowsError(try sut.content(from: .init(), using: { $0 }))
+    let sut = MarkdownContentYAMLBuilder(frontMatterExporter: exporter, markdownExtractor: extractor)
+
+    assertThrows(
+      { try sut.content(from: .init(), using: { $0 }) },
+      expectedError: .frontMatterExport
+    )
   }
 
   internal func testFailedMarkdownExtract() throws {
-    let exporter = FrontMatterExporterSuccessfulSpy()
-    let extractor = MarkdownExtractorFailedSpy()
-    let sut = MarkdownContentYAMLBuilder<
-      MockSource,
-      MarkdownExtractorFailedSpy,
-      FrontMatterExporterSuccessfulSpy
-    >(
-      frontMatterExporter: exporter,
-      markdownExtractor: extractor
-    )
+    let exporter = FrontMatterExporterSpy.success
+    let extractor = MarkdownExtractorSpy.failure
 
-    XCTAssertThrowsError(try sut.content(from: .init(), using: { $0 }))
+    let sut = MarkdownContentYAMLBuilder(frontMatterExporter: exporter, markdownExtractor: extractor)
+
+    assertThrows(
+      { try sut.content(from: .init(), using: { $0 }) },
+      expectedError: .markdownExtract
+    )
   }
 
 }

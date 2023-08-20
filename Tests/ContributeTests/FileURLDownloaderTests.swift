@@ -4,12 +4,12 @@ import XCTest
 internal final class FileURLDownloaderTests: XCTestCase {
 
   internal func testSuccessfulNetworkCall() {
-    let sut = FileURLDownloader(
-      networkManager: NetworkManagerSuccessfulSpy(),
-      fileManager: FileManagerSpy()
-    )
+    let networkManager = NetworkManagerSpy.success
+    let fileManager = FileManagerSpy()
 
-    let expect = XCTestExpectation()
+    let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
+
+    let expectation = XCTestExpectation()
 
     sut.download(
       from: URL(string: "https://www.google.com")!,
@@ -17,23 +17,23 @@ internal final class FileURLDownloaderTests: XCTestCase {
       allowOverwrite: true
     ) { error in
       guard let _ = error else {
-        expect.fulfill()
+        expectation.fulfill()
         return
       }
 
       XCTFail()
     }
 
-    wait(for: [expect], timeout: 0.100)
+    wait(for: [expectation], timeout: 0.100)
   }
 
   internal func testFailedNetworkCall() {
-    let sut = FileURLDownloader(
-      networkManager: NetworkManagerFailedSpy(),
-      fileManager: FileManagerSpy()
-    )
+    let networkManager = NetworkManagerSpy.failure
+    let fileManager = FileManagerSpy()
 
-    let expect = XCTestExpectation()
+    let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
+
+    let expectation = XCTestExpectation()
 
     sut.download(
       from: URL(string: "https://www.google.com")!,
@@ -45,20 +45,21 @@ internal final class FileURLDownloaderTests: XCTestCase {
         return
       }
 
-      expect.fulfill()
+      expectation.fulfill()
     }
 
-    wait(for: [expect], timeout: 0.100)
+    wait(for: [expectation], timeout: 0.100)
   }
 
   internal func testSuccessfulDirectoryCreate() {
+    let networkManager = NetworkManagerSpy.success
+
     var isCalled: Bool?
-    let sut = FileURLDownloader(
-      networkManager: NetworkManagerSuccessfulSpy(),
-      fileManager: FileManagerSpy(
-        createDirectory: { _ in isCalled = true }
-      )
+    let fileManager = FileManagerSpy(
+      createDirectory: { _ in isCalled = true }
     )
+
+    let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
 
     sut.download(
       from: .temporaryDirURL,
@@ -71,14 +72,14 @@ internal final class FileURLDownloaderTests: XCTestCase {
   }
 
   internal func testFailedDirectoryCreate() {
-    let sut = FileURLDownloader(
-      networkManager: DumpNetworkManager(),
-      fileManager: FileManagerSpy(
-        createDirectory: { _ in throw testError }
-      )
+    let networkManager = NetworkManagerSpy.success
+    let fileManager = FileManagerSpy(
+      createDirectory: { _ in throw TestError.createDirectory }
     )
 
-    let expect = XCTestExpectation()
+    let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
+
+    let expectation = XCTestExpectation()
 
     sut.download(
       from: .temporaryDirURL,
@@ -90,23 +91,23 @@ internal final class FileURLDownloaderTests: XCTestCase {
         return
       }
 
-      expect.fulfill()
+      expectation.fulfill()
     }
 
-    wait(for: [expect], timeout: 0.100)
+    wait(for: [expectation], timeout: 0.100)
   }
 
-  internal func testSuccessfulFileExists() {
+  internal func testFileExists() {
+    let networkManager = NetworkManagerSpy.success
     var isCalled: Bool?
-    let sut = FileURLDownloader(
-      networkManager: NetworkManagerSuccessfulSpy(),
-      fileManager: FileManagerSpy(
-        fileExists: { _ in
-          isCalled = true
-          return true
-        }
-      )
+    let fileManager = FileManagerSpy(
+      fileExists: { _ in
+        isCalled = true
+        return true
+      }
     )
+
+    let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
 
     sut.download(
       from: .temporaryDirURL,
@@ -119,15 +120,16 @@ internal final class FileURLDownloaderTests: XCTestCase {
   }
 
   internal func testSuccessfulCopyItem() {
+    let networkManager = NetworkManagerSpy.success
     var isCalled: Bool?
-    let sut = FileURLDownloader(
-      networkManager: NetworkManagerSuccessfulSpy(),
-      fileManager: FileManagerSpy(
-        copyItem: { _, _ in
-          isCalled = true
-        }
-      )
+    let fileManager = FileManagerSpy(
+      fileExists: { _ in
+        isCalled = true
+        return true
+      }
     )
+
+    let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
 
     sut.download(
       from: .temporaryDirURL,
@@ -140,16 +142,16 @@ internal final class FileURLDownloaderTests: XCTestCase {
   }
 
   internal func testFailedCopyItem() {
-    let sut = FileURLDownloader(
-      networkManager: NetworkManagerSuccessfulSpy(),
-      fileManager: FileManagerSpy(
-        copyItem: { _, _ in
-          throw testError
-        }
-      )
+    let networkManager = NetworkManagerSpy.success
+    let fileManager = FileManagerSpy(
+      copyItem: { _, _ in
+        throw TestError.copyItem
+      }
     )
 
-    let expect = XCTestExpectation()
+    let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
+
+    let expectation = XCTestExpectation()
 
     sut.download(
       from: .temporaryDirURL,
@@ -161,22 +163,22 @@ internal final class FileURLDownloaderTests: XCTestCase {
         return
       }
 
-      expect.fulfill()
+      expectation.fulfill()
     }
 
-    wait(for: [expect], timeout: 0.100)
+    wait(for: [expectation], timeout: 0.100)
   }
 
   internal func testSuccessfulRemoveItem() {
+    let networkManager = NetworkManagerSpy.success
     var isCalled: Bool?
-    let sut = FileURLDownloader(
-      networkManager: NetworkManagerSuccessfulSpy(),
-      fileManager: FileManagerSpy(
-        removeItem: { _ in
-          isCalled = true
-        }
-      )
+    let fileManager = FileManagerSpy(
+      removeItem: { _ in
+        isCalled = true
+      }
     )
+
+    let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
 
     sut.download(
       from: .temporaryDirURL,
@@ -189,16 +191,16 @@ internal final class FileURLDownloaderTests: XCTestCase {
   }
 
   internal func testFailedRemoveItem() {
-    let sut = FileURLDownloader(
-      networkManager: NetworkManagerSuccessfulSpy(),
-      fileManager: FileManagerSpy(
-        removeItem: { _ in
-          throw testError
-        }
-      )
+    let networkManager = NetworkManagerSpy.success
+    let fileManager = FileManagerSpy(
+      removeItem: { _ in
+        throw TestError.removeItem
+      }
     )
 
-    let expect = XCTestExpectation()
+    let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
+
+    let expectation = XCTestExpectation()
 
     sut.download(
       from: .temporaryDirURL,
@@ -210,10 +212,10 @@ internal final class FileURLDownloaderTests: XCTestCase {
         return
       }
 
-      expect.fulfill()
+      expectation.fulfill()
     }
 
-    wait(for: [expect], timeout: 0.100)
+    wait(for: [expectation], timeout: 0.100)
   }
 
 }

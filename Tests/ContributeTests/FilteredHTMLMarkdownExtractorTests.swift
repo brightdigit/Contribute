@@ -21,9 +21,15 @@ internal final class FilteredHTMLMarkdownExtractorTests: XCTestCase {
 
     XCTAssertThrowsError(
       try sut.markdown(from: .init()) { _ in
-        throw testError
+        throw TestError.htmlExtract
       }
-    )
+    ) { actualError in
+      guard let actualError = actualError as? TestError,
+            actualError == .htmlExtract else {
+        XCTFail()
+        return
+      }
+    }
   }
 
 }

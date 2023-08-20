@@ -1,12 +1,12 @@
 import Foundation
 import Contribute
 
-final class FrontMatterTranslatorSpy: FrontMatterTranslator {
+internal final class FrontMatterTranslatorSpy: FrontMatterTranslator {
   private(set) var isCalled: Bool?
 
-  required init() {} 
+  internal required init() {}
 
-  func frontMatter(from source: MockSource) -> MockFrontMatter {
+  internal func frontMatter(from source: MockSource) -> MockFrontMatter {
     isCalled = true
     return MockFrontMatter()
   }

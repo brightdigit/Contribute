@@ -1,23 +1,29 @@
 import Foundation
 import Contribute
 
-final class MarkdownExtractorSuccessfulSpy: MarkdownExtractor {
-  private(set) var isCalled: Bool?
+internal final class MarkdownExtractorSpy: MarkdownExtractor {
+  internal static var success: Self { .init(.success(true)) }
+  internal static var failure: Self { .init(.failure(.markdownExtract)) }
 
-  func markdown(
-    from source: MockSource,
-    using htmlToMarkdown: @escaping (String) throws -> String
-  ) throws -> String {
-    isCalled = true
-    return "markdown"
+  private let result: Result<Bool, TestError>
+
+  internal init() {
+    fatalError("Never needed to be called for testing")
   }
-}
 
-final class MarkdownExtractorFailedSpy: MarkdownExtractor {
-  func markdown(
+  internal init(_ result: Result<Bool, TestError>) {
+    self.result = result
+  }
+
+  internal func markdown(
     from source: MockSource,
     using htmlToMarkdown: @escaping (String) throws -> String
   ) throws -> String {
-    throw testError
+    switch result {
+    case .success:
+      return "**markdown**"
+    case .failure(let failure):
+      throw failure
+    }
   }
 }

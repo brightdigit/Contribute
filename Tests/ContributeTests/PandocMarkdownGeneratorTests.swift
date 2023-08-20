@@ -24,10 +24,16 @@ internal final class PandocMarkdownGeneratorTests: XCTestCase {
 
   internal func testFailedMarkdownGenerate() throws {
     let sut = PandocMarkdownGenerator { _,_  in
-      throw testError
+      throw TestError.markdownGenerate
     }
 
-    XCTAssertThrowsError(try sut.markdown(fromHTML: "<html />"))
+    XCTAssertThrowsError(try sut.markdown(fromHTML: "<html />")) { actualError in
+      guard let actualError = actualError as? TestError,
+            actualError == .markdownGenerate else {
+        XCTFail()
+        return
+      }
+    }
   }
 
 }
