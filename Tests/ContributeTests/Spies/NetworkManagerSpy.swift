@@ -23,7 +23,12 @@ internal final class NetworkManagerSpy: URLSessionable {
     case .success:
       completion(
         .temporaryDirURL,
-        HTTPURLResponse(url: fromURL, statusCode: 200, httpVersion: nil, headerFields: nil),
+        HTTPURLResponse(
+          url: fromURL,
+          statusCode: 200,
+          httpVersion: nil,
+          headerFields: nil
+        ),
         nil
       )
 

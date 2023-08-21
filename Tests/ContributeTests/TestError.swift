@@ -1,6 +1,6 @@
 import Foundation
 
-enum TestError: Error, Equatable {
+internal enum TestError: Error, Equatable {
   case frontMatterExport
   case markdownExtract
   case networkDownload
@@ -9,4 +9,5 @@ enum TestError: Error, Equatable {
   case removeItem
   case htmlExtract
   case markdownGenerate
+  case makeURL
 }

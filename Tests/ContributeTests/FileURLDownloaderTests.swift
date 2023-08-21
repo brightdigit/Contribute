@@ -1,8 +1,12 @@
+// swiftlint:disable file_length
+// swiftlint:disable type_body_length
+// swiftlint:disable trailing_closure
+// swiftlint:disable function_body_length
 @testable import Contribute
 import XCTest
 
 internal final class FileURLDownloaderTests: XCTestCase {
-  internal func testSuccessfulNetworkCall() {
+  internal func testSuccessfulNetworkCall() throws {
     let networkManager = NetworkManagerSpy.success
     let fileManager = FileManagerSpy()
 
@@ -11,22 +15,22 @@ internal final class FileURLDownloaderTests: XCTestCase {
     let expectation = XCTestExpectation()
 
     sut.download(
-      from: URL(string: "https://www.google.com")!,
+      from: try makeURL(from: "https://www.google.com"),
       to: .temporaryDirURL,
       allowOverwrite: true
     ) { error in
-      guard let _ = error else {
+      if error == nil {
         expectation.fulfill()
         return
       }
 
-      XCTFail()
+      XCTFail("Expected successful network call")
     }
 
     wait(for: [expectation], timeout: 0.100)
   }
 
-  internal func testFailedNetworkCall() {
+  internal func testFailedNetworkCall() throws {
     let networkManager = NetworkManagerSpy.failure
     let fileManager = FileManagerSpy()
 
@@ -35,12 +39,12 @@ internal final class FileURLDownloaderTests: XCTestCase {
     let expectation = XCTestExpectation()
 
     sut.download(
-      from: URL(string: "https://www.google.com")!,
+      from: try makeURL(from: "https://www.google.com"),
       to: .temporaryDirURL,
       allowOverwrite: true
     ) { error in
-      guard let _ = error else {
-        XCTFail()
+      guard error != nil else {
+        XCTFail("Expected failed network call")
         return
       }
 
@@ -53,9 +57,9 @@ internal final class FileURLDownloaderTests: XCTestCase {
   internal func testSuccessfulDirectoryCreate() {
     let networkManager = NetworkManagerSpy.success
 
-    var isCalled: Bool?
+    var isCalled: Bool = false
     let fileManager = FileManagerSpy(
-      createDirectory: { _ in isCalled = true }
+      createDirectory: { _, _ in isCalled = true }
     )
 
     let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
@@ -63,16 +67,18 @@ internal final class FileURLDownloaderTests: XCTestCase {
     sut.download(
       from: .temporaryDirURL,
       to: .temporaryDirURL,
-      allowOverwrite: true, { _ in }
-    )
+      allowOverwrite: true
+    ) { _ in
+      // doing nothing
+    }
 
-    XCTAssertEqual(isCalled, true)
+    XCTAssertTrue(isCalled)
   }
 
   internal func testFailedDirectoryCreate() {
     let networkManager = NetworkManagerSpy.success
     let fileManager = FileManagerSpy(
-      createDirectory: { _ in throw TestError.createDirectory }
+      createDirectory: { _, _ in throw TestError.createDirectory }
     )
 
     let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
@@ -84,8 +90,8 @@ internal final class FileURLDownloaderTests: XCTestCase {
       to: .temporaryDirURL,
       allowOverwrite: true
     ) { error in
-      guard let _ = error else {
-        XCTFail()
+      guard error != nil else {
+        XCTFail("Expected failed directory create")
         return
       }
 
@@ -97,7 +103,7 @@ internal final class FileURLDownloaderTests: XCTestCase {
 
   internal func testFileExists() {
     let networkManager = NetworkManagerSpy.success
-    var isCalled: Bool?
+    var isCalled: Bool = false
     let fileManager = FileManagerSpy(
       fileExists: { _ in
         isCalled = true
@@ -110,15 +116,17 @@ internal final class FileURLDownloaderTests: XCTestCase {
     sut.download(
       from: .temporaryDirURL,
       to: .temporaryDirURL,
-      allowOverwrite: true, { _ in }
-    )
+      allowOverwrite: true
+    ) { _ in
+      // doing nothing
+    }
 
-    XCTAssertEqual(isCalled, true)
+    XCTAssertTrue(isCalled)
   }
 
   internal func testSuccessfulCopyItem() {
     let networkManager = NetworkManagerSpy.success
-    var isCalled: Bool?
+    var isCalled: Bool = false
     let fileManager = FileManagerSpy(
       fileExists: { _ in
         isCalled = true
@@ -131,10 +139,12 @@ internal final class FileURLDownloaderTests: XCTestCase {
     sut.download(
       from: .temporaryDirURL,
       to: .temporaryDirURL,
-      allowOverwrite: true, { _ in }
-    )
+      allowOverwrite: true
+    ) { _ in
+      // doing nothing
+    }
 
-    XCTAssertEqual(isCalled, true)
+    XCTAssertTrue(isCalled)
   }
 
   internal func testFailedCopyItem() {
@@ -154,8 +164,8 @@ internal final class FileURLDownloaderTests: XCTestCase {
       to: .temporaryDirURL,
       allowOverwrite: true
     ) { error in
-      guard let _ = error else {
-        XCTFail()
+      guard error != nil else {
+        XCTFail("Expected failed copy item")
         return
       }
 
@@ -167,7 +177,7 @@ internal final class FileURLDownloaderTests: XCTestCase {
 
   internal func testSuccessfulRemoveItem() {
     let networkManager = NetworkManagerSpy.success
-    var isCalled: Bool?
+    var isCalled: Bool = false
     let fileManager = FileManagerSpy(
       removeItem: { _ in
         isCalled = true
@@ -179,10 +189,12 @@ internal final class FileURLDownloaderTests: XCTestCase {
     sut.download(
       from: .temporaryDirURL,
       to: .temporaryDirURL,
-      allowOverwrite: true, { _ in }
-    )
+      allowOverwrite: true
+    ) { _ in
+      // doing nothing
+    }
 
-    XCTAssertEqual(isCalled, true)
+    XCTAssertTrue(isCalled)
   }
 
   internal func testFailedRemoveItem() {
@@ -202,8 +214,8 @@ internal final class FileURLDownloaderTests: XCTestCase {
       to: .temporaryDirURL,
       allowOverwrite: true
     ) { error in
-      guard let _ = error else {
-        XCTFail()
+      guard error != nil else {
+        XCTFail("Expected failed remove item")
         return
       }
 
@@ -211,5 +223,15 @@ internal final class FileURLDownloaderTests: XCTestCase {
     }
 
     wait(for: [expectation], timeout: 0.100)
+  }
+
+  // MARK: - Helpers
+
+  private func makeURL(from string: String) throws -> URL {
+    guard let url = URL(string: string) else {
+      throw TestError.makeURL
+    }
+
+    return url
   }
 }

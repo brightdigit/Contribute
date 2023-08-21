@@ -3,7 +3,7 @@ import XCTest
 
 internal final class PandocMarkdownGeneratorTests: XCTestCase {
   internal func testSuccessfulMarkdownGenerate() throws {
-    var isCalled: Bool?
+    var isCalled: Bool = false
     let sut = PandocMarkdownGenerator { _, _ in
       isCalled = true
       return "result"
@@ -11,7 +11,7 @@ internal final class PandocMarkdownGeneratorTests: XCTestCase {
 
     _ = try sut.markdown(fromHTML: "<html />")
 
-    XCTAssertEqual(isCalled, true)
+    XCTAssertTrue(isCalled)
   }
 
   internal func testFailedMarkdownGenerate() throws {
@@ -20,9 +20,10 @@ internal final class PandocMarkdownGeneratorTests: XCTestCase {
     }
 
     XCTAssertThrowsError(try sut.markdown(fromHTML: "<html />")) { actualError in
-      guard let actualError = actualError as? TestError,
-            actualError == .markdownGenerate else {
-        XCTFail()
+      guard
+        let actualError = actualError as? TestError,
+        actualError == .markdownGenerate else {
+        XCTFail("Expected failed markdown generate")
         return
       }
     }

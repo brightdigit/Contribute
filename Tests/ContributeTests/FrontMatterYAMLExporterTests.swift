@@ -8,6 +8,6 @@ internal final class FrontMatterYAMLExporterTests: XCTestCase {
 
     _ = try sut.frontMatterText(from: .init())
 
-    XCTAssertEqual(translator.isCalled, true)
+    XCTAssertTrue(translator.isCalled)
   }
 }

@@ -1,4 +1,3 @@
-// swiftlint:disable line_length
 @testable import Contribute
 import XCTest
 
@@ -8,7 +7,7 @@ internal final class HTMLtoMarkdownTests: XCTestCase {
   }
 
   internal func testSuccessfulMarkdownGenerate() throws {
-    var isCalled: Bool?
+    var isCalled: Bool = false
     let sut = HTMLtoMarkdown { _ in
       isCalled = true
       return "#markdown"
@@ -16,7 +15,7 @@ internal final class HTMLtoMarkdownTests: XCTestCase {
 
     _ = try sut.markdown(fromHTML: "<html />")
 
-    XCTAssertEqual(isCalled, true)
+    XCTAssertTrue(isCalled)
   }
 
   internal func testFailedMarkdownGenerate() throws {
@@ -25,9 +24,10 @@ internal final class HTMLtoMarkdownTests: XCTestCase {
     }
 
     XCTAssertThrowsError(try sut.markdown(fromHTML: "")) { actualError in
-      guard let actualError = actualError as? TestError,
-            actualError == .markdownGenerate else {
-        XCTFail()
+      guard
+        let actualError = actualError as? TestError,
+        actualError == .markdownGenerate else {
+        XCTFail("Expected failed markdown generate")
         return
       }
     }

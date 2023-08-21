@@ -2,25 +2,29 @@ import Contribute
 import Foundation
 
 internal final class FileManagerSpy: FileManagerProtocol {
-  private var createDirectory: (URL) throws -> Void
+  private var createDirectory: (URL, Bool) throws -> Void
   private var fileExists: (String) -> Bool
   private var copyItem: (URL, URL) throws -> Void
   private var removeItem: (URL) throws -> Void
 
   internal init(
-    createDirectory: ((URL) throws -> Void)? = nil,
+    createDirectory: ((URL, Bool) throws -> Void)? = nil,
     fileExists: ((String) -> Bool)? = nil,
     copyItem: ((URL, URL) throws -> Void)? = nil,
     removeItem: ((URL) throws -> Void)? = nil
   ) {
-    self.createDirectory = createDirectory ?? { _ in }
+    self.createDirectory = createDirectory ?? { _, _ in }
     self.fileExists = fileExists ?? { _ in true }
     self.copyItem = copyItem ?? { _, _ in }
     self.removeItem = removeItem ?? { _ in }
   }
 
-  internal func createDirectory(at url: URL) throws {
-    try createDirectory(url)
+  internal func createDirectory(
+    at url: URL,
+    withIntermediateDirectories createIntermediates: Bool,
+    attributes _: [FileAttributeKey: Any]?
+  ) throws {
+    try createDirectory(url, createIntermediates)
   }
 
   internal func fileExists(atPath path: String) -> Bool {

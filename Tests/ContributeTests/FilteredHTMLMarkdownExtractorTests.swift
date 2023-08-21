@@ -5,17 +5,17 @@ internal final class FilteredHTMLMarkdownExtractorTests: XCTestCase {
   internal func testSuccessfulHtmlExtract() throws {
     let sut = FilteredHTMLMarkdownExtractor<MockSource>()
 
-    var isCalled: Bool?
+    var isCalled: Bool = false
     _ = try sut.markdown(from: .init()) { value in
       isCalled = true
       return value
     }
 
     XCTAssertNotNil(isCalled)
-    XCTAssertEqual(isCalled, true)
+    XCTAssertTrue(isCalled)
   }
 
-  func testFailedHtmlExtract() throws {
+  internal func testFailedHtmlExtract() throws {
     let sut = FilteredHTMLMarkdownExtractor<MockSource>()
 
     XCTAssertThrowsError(
@@ -23,9 +23,10 @@ internal final class FilteredHTMLMarkdownExtractorTests: XCTestCase {
         throw TestError.htmlExtract
       }
     ) { actualError in
-      guard let actualError = actualError as? TestError,
-            actualError == .htmlExtract else {
-        XCTFail()
+      guard
+        let actualError = actualError as? TestError,
+        actualError == .htmlExtract else {
+        XCTFail("Expected failed html extract")
         return
       }
     }

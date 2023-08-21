@@ -8,7 +8,7 @@ internal final class MarkdownExtractorSpy: MarkdownExtractor {
   private let result: Result<Bool, TestError>
 
   internal init() {
-    fatalError("Never needed to be called for testing")
+    result = .success(true)
   }
 
   internal init(_ result: Result<Bool, TestError>) {

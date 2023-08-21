@@ -1,7 +1,7 @@
 @testable import Contribute
 import XCTest
 
-// TODO: @Leo, I don't feel this is correct testing at all.
+// TODO: @Leo, I don't feel this is the correct testing.
 internal final class YAMLTests: XCTestCase {
   internal func testValidDateFormat() {
     XCTAssertEqual(

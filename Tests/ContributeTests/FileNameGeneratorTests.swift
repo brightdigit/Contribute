@@ -1,9 +1,9 @@
 @testable import Contribute
 import XCTest
 
-final class FileNameGeneratorTests: XCTestCase {
-  func testFileNameGenerate() {
-    var isCalled: Bool?
+internal final class FileNameGeneratorTests: XCTestCase {
+  internal func testFileNameGenerate() {
+    var isCalled: Bool = false
     let sut = FileNameGenerator<MockSource> { _ in
       isCalled = true
       return "result"
@@ -11,6 +11,6 @@ final class FileNameGeneratorTests: XCTestCase {
 
     _ = sut.destinationURL(from: .init(), atContentPathURL: .temporaryDirURL)
 
-    XCTAssertEqual(isCalled, true)
+    XCTAssertTrue(isCalled)
   }
 }

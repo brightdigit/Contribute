@@ -2,7 +2,7 @@ import Contribute
 import Foundation
 
 internal final class FrontMatterTranslatorSpy: FrontMatterTranslator {
-  private(set) var isCalled: Bool?
+  internal private(set) var isCalled: Bool = false
 
   internal required init() {}
 
