@@ -59,7 +59,7 @@ public struct FileURLDownloader: URLDownloader {
     allowOverwrite: Bool,
     _ completion: @escaping (Error?) -> Void
   ) {
-    _ = networkManager.download(fromURL: fromURL) { destination, _, error in
+    networkManager.download(fromURL: fromURL) { destination, _, error in
       guard let sourceURL = destination else {
         return completion(error)
       }
