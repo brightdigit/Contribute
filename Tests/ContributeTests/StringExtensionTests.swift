@@ -1,15 +1,7 @@
-//
-//  StringExtensionTests.swift
-//  
-//
-//  Created by Ahmed Shendy on 23/08/2023.
-//
-
 import XCTest
 
-final class StringExtensionTests: XCTestCase {
-
-  func testFixUnicodeEscape() {
+internal final class StringExtensionTests: XCTestCase {
+  internal func testFixUnicodeEscape() {
     let string = "’some string’"
 
     let expectedString = "'some string'"
@@ -18,11 +10,11 @@ final class StringExtensionTests: XCTestCase {
     XCTAssertEqual(actualString, expectedString)
   }
 
-  func testQequoteWhenEmptyString() {
+  internal func testQequoteWhenEmptyString() {
     XCTAssertTrue("".dequote().isEmpty)
   }
 
-  func testDequoteWhenQuotesAvailable() {
+  internal func testDequoteWhenQuotesAvailable() {
     let string = "\"some string\""
     let expectedString = "some string"
     let actualString = string.dequote()
@@ -30,7 +22,7 @@ final class StringExtensionTests: XCTestCase {
     XCTAssertEqual(actualString, expectedString)
   }
 
-  func testQequoteWhenNoQuote() {
+  internal func testQequoteWhenNoQuote() {
     let string = "some string"
     let expectedString = "some string"
     let actualString = string.dequote()
@@ -38,7 +30,7 @@ final class StringExtensionTests: XCTestCase {
     XCTAssertEqual(actualString, expectedString)
   }
 
-  func testPadLeftWhenNotEmptyString() {
+  internal func testPadLeftWhenNotEmptyString() {
     let string = "some string"
     let padding = "- "
 
@@ -51,7 +43,7 @@ final class StringExtensionTests: XCTestCase {
     XCTAssertEqual(actualString, expectedString)
   }
 
-  func testSlugifyWithNormalString() {
+  internal func testSlugifyWithNormalString() {
     let string = "2018 - My Year in Review"
 
     let expectedSlug = "2018-my-year-in-review"
@@ -60,7 +52,7 @@ final class StringExtensionTests: XCTestCase {
     XCTAssertEqual(actualSlug, expectedSlug)
   }
 
-  func testSlugifyWitMessyString() {
+  internal func testSlugifyWitMessyString() {
     let string = " 2018 - ~!@##$%^&*()_+?><\":|}{;' My Year $ _   in _ Review   "
 
     let expectedSlug = "2018-my-year-in-review"
