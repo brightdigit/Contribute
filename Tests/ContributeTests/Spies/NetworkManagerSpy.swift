@@ -5,13 +5,17 @@ import Foundation
   import FoundationNetworking
 #endif
 
+enum NetworkManagerTestError: Error, Equatable {
+  case networkDownload
+}
+
 internal final class NetworkManagerSpy: URLSessionable {
   internal static var success: Self { .init(.success(true)) }
   internal static var failure: Self { .init(.failure(.networkDownload)) }
 
-  private let result: Result<Bool, TestError>
+  private let result: Result<Bool, NetworkManagerTestError>
 
-  internal init(_ result: Result<Bool, TestError>) {
+  internal init(_ result: Result<Bool, NetworkManagerTestError>) {
     self.result = result
   }
 
@@ -33,7 +37,7 @@ internal final class NetworkManagerSpy: URLSessionable {
       )
 
     case .failure:
-      completion(nil, nil, TestError.networkDownload)
+      completion(nil, nil, NetworkManagerTestError.networkDownload)
     }
   }
 }

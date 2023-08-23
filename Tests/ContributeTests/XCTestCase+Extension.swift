@@ -8,6 +8,7 @@ extension XCTestCase {
     let expectation = XCTestExpectation()
 
     XCTAssertThrowsError(try throwableBlock()) { actualError in
+      print(actualError)
       guard
         let actualError = actualError as? TestError,
         actualError == expectedError else {

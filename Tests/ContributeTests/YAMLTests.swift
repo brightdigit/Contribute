@@ -1,5 +1,5 @@
-import XCTest
 @testable import Contribute
+import XCTest
 
 internal final class YAMLTests: XCTestCase {
   internal func testValidDateFormat() {

@@ -15,29 +15,24 @@ internal final class MarkdownContentYAMLBuilderTests: XCTestCase {
   }
 
   internal func testFailedFrontMatterExport() throws {
-    let exporter = FrontMatterExporterSpy.failure
-    let extractor = MarkdownExtractorSpy.success
-
-    let sut = MarkdownContentYAMLBuilder(
-      frontMatterExporter: exporter,
-      markdownExtractor: extractor
-    )
-
-    assertThrows(expectedError: .frontMatterExport) {
-      try sut.content(from: .init()) { $0 }
-    }
+    assertSUT(with: .failure, and: .success, expectedError: .frontMatterExport)
   }
 
   internal func testFailedMarkdownExtract() throws {
-    let exporter = FrontMatterExporterSpy.success
-    let extractor = MarkdownExtractorSpy.failure
+    assertSUT(with: .success, and: .failure, expectedError: .markdownExtract)
+  }
 
+  private func assertSUT(
+    with frontMatterExporter: FrontMatterExporterSpy,
+    and markdownExtractor: MarkdownExtractorSpy,
+    expectedError: TestError
+  ) {
     let sut = MarkdownContentYAMLBuilder(
-      frontMatterExporter: exporter,
-      markdownExtractor: extractor
+      frontMatterExporter: frontMatterExporter,
+      markdownExtractor: markdownExtractor
     )
 
-    assertThrows(expectedError: .markdownExtract) {
+    assertThrows(expectedError: expectedError) {
       try sut.content(from: .init()) { $0 }
     }
   }
