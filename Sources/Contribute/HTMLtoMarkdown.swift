@@ -3,7 +3,7 @@ import Foundation
 /// Closure based ``MarkdownGenerator``
 public struct HTMLtoMarkdown: MarkdownGenerator {
   /// Closure to run to convert HTML to Markdown
-  public let markdownFromHTML: (String) throws -> String
+  private let markdownFromHTML: (String) throws -> String
 
   /// Creates a ``MarkdownGenerator`` based on a closure
   ///

@@ -9,10 +9,7 @@ public struct PandocMarkdownGenerator: MarkdownGenerator {
   /// A namespace for temporary file operations.
   public enum Temporary {
     /// The URL of the temporary directory.
-    private static let temporaryDirURL = URL(
-      fileURLWithPath: NSTemporaryDirectory(),
-      isDirectory: true
-    )
+    private static let temporaryDirURL: URL = .temporaryDirURL
 
     /// Creates a temporary file from the given content.
     ///
