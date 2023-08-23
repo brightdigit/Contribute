@@ -1,17 +1,16 @@
 import Contribute
 import Foundation
 
-enum FileManagerTestError: String, Error, Equatable, CaseIterable {
+internal enum FileManagerTestError: String, Error, Equatable, CaseIterable {
   case createDirectory
   case copyItem
   case removeItem
 }
 
 internal final class FileManagerSpy: FileManagerProtocol {
-
-  static var successfulDirectoryCreate: Self { .init(createDirectoryResult: .success(())) }
-  static var successfulItemCopy: Self { .init(copyItemResult: .success(())) }
-
+  internal static var successfulDirectoryCreate: Self {
+    .init(createDirectoryResult: .success(()))
+  }
 
   internal private(set) var createDirectoryIsCalled: Bool = false
   internal private(set) var fileExistsIsCalled: Bool = false
@@ -22,17 +21,6 @@ internal final class FileManagerSpy: FileManagerProtocol {
   private var fileExistsResult: Result<Bool, Never>?
   private var copyItemResult: Result<Void, FileManagerTestError>?
   private var removeItemResult: Result<Void, FileManagerTestError>?
-
-  convenience init(error: FileManagerTestError) {
-    switch error {
-    case .createDirectory:
-      self.init(createDirectoryResult: .failure(.createDirectory))
-    case .copyItem:
-      self.init(copyItemResult: .failure(.copyItem))
-    case .removeItem:
-      self.init(removeItemResult: .failure(.removeItem))
-    }
-  }
 
   internal init(
     createDirectoryResult: Result<Void, FileManagerTestError>? = nil,

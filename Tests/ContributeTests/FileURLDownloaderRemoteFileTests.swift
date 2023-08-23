@@ -1,8 +1,8 @@
 @testable import Contribute
 import XCTest
 
-internal final class FileURLDownloaderNetworkTests: XCTestCase {
-  let fileManager = FileManagerSpy()
+internal final class FileURLDownloaderRemoteFileTests: XCTestCase {
+  private let fileManager = FileManagerSpy()
 
   internal func testSuccessfulNetworkCall() throws {
     let networkManager = NetworkManagerSpy.success

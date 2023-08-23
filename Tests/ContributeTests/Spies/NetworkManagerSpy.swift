@@ -5,7 +5,7 @@ import Foundation
   import FoundationNetworking
 #endif
 
-enum NetworkManagerTestError: Error, Equatable {
+internal enum NetworkManagerTestError: Error, Equatable {
   case networkDownload
 }
 

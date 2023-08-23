@@ -32,7 +32,7 @@ internal final class MarkdownContentYAMLBuilderTests: XCTestCase {
       markdownExtractor: markdownExtractor
     )
 
-    assertThrows(expectedError: expectedError) {
+    assertThrowableBlock(expectedError: expectedError) {
       try sut.content(from: .init()) { $0 }
     }
   }
