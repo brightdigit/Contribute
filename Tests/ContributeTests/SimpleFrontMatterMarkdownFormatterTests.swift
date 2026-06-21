@@ -1,18 +1,17 @@
-@testable import Contribute
 import XCTest
 
-internal final class SimpleFrontMatterMarkdownFormatterTests: XCTestCase {
-  private let formatter: SimpleFrontMatterMarkdownFormatter = .simple
+@testable import Contribute
 
+internal final class SimpleFrontMatterMarkdownFormatterTests: XCTestCase {
   internal func testFormatting() {
     let sut = SimpleFrontMatterMarkdownFormatter()
 
     let frontMatter = "title: 2018 - My Year in Review"
     let markdown = """
-    ## My Goals for 2018
+      ## My Goals for 2018
 
-    As I said I removed many activities from my life mostly...
-    """
+      As I said I removed many activities from my life mostly...
+      """
 
     assert(sut: sut, frontMatterText: frontMatter, markdownText: markdown)
   }
