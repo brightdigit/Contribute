@@ -1,16 +1,24 @@
 <p align="center">
-  <img src="Sources/Contribute/Documentation.docc/Resources/ContributeLogo.png" alt="Contribute" height="100" />
+    <img alt="Contribute" title="Contribute" src="Sources/Contribute/Documentation.docc/Resources/ContributeLogo.png" height="200">
 </p>
 
-<h1 align="center">Contribute</h1>
+# Contribute
 
 <p align="center">Create content for your site from existing sources.</p>
 
-<p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
-  <img src="https://img.shields.io/badge/Swift-5.8%2B-orange.svg" alt="Swift 5.8+" />
-  <img src="https://img.shields.io/badge/platforms-macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS-lightgrey.svg" alt="Platforms" />
-</p>
+<!-- Platform Compatibility -->
+[![Swift Versions](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fbrightdigit%2FContribute%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/brightdigit/Contribute)
+[![Platforms](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fbrightdigit%2FContribute%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/brightdigit/Contribute)
+
+<!-- Documentation & License -->
+[![Documentation](https://img.shields.io/badge/docc-read_documentation-blue)](https://swiftpackageindex.com/brightdigit/Contribute/documentation)
+[![License](https://img.shields.io/github/license/brightdigit/Contribute)](LICENSE)
+
+<!-- CI/CD & Code Quality -->
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/brightdigit/Contribute/Contribute.yml?label=actions&logo=github&branch=main)](https://github.com/brightdigit/Contribute/actions)
+[![Maintainability](https://qlty.sh/gh/brightdigit/projects/Contribute/maintainability.svg)](https://qlty.sh/gh/brightdigit/projects/Contribute)
+[![Codecov](https://img.shields.io/codecov/c/github/brightdigit/Contribute)](https://codecov.io/gh/brightdigit/Contribute)
+[![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/brightdigit/Contribute)](https://www.codefactor.io/repository/github/brightdigit/Contribute)
 
 ---
 
