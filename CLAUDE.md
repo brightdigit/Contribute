@@ -57,3 +57,15 @@ XCTest-based (`Tests/ContributeTests/`). The suite leans on hand-written **Spies
 ## CI
 
 A single workflow, `.github/workflows/Contribute.yml` (a shared BrightDigit template). It builds on Ubuntu (nightly-6.4 container, plus wasm/wasm-embedded variants gated by the `ENABLE_WASM` repo variable), self-hosted macOS + Apple platforms (Xcode 27/Swift 6.4), Windows, and Android. Matrix scope tiers up by ref: small set always; full matrix + Windows on `main`/semver tags/dispatch/PRs into `main`. Skip CI with `ci skip` in the commit message. Code is `#if canImport(FoundationNetworking)`-guarded for non-Apple platforms — preserve those guards.
+
+## Memory & Corrections Convention
+
+`.claude/agent-notes.md` is the canonical, versioned corrections log for this repository — an
+append-only record of the maintainer's corrections and standing **always/never** directives.
+
+- **Read `.claude/agent-notes.md` at the start of every work session, before doing any work.** It
+  is the source of truth for *how* to work in this repo.
+- **Whenever the maintainer makes a correction or gives an always/never instruction, append one
+  line to `.claude/agent-notes.md` proactively (without being asked).** One line per directive,
+  newest at the bottom. If a directive supersedes an earlier one, update or remove the stale line
+  rather than leaving both.
