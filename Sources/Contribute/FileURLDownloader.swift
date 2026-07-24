@@ -57,26 +57,23 @@ public struct FileURLDownloader: URLDownloader {
   ///   - fromURL: The URL of the file to download.
   ///   - toURL: The destination URL for the file.
   ///   - allowOverwrite: Whether to overwrite the destination file if it already exists.
-  ///   - completion: A completion handler that is called with the error, if any.
+  /// - Throws: Any error encountered while downloading or copying the file.
   public func download(
     from fromURL: URL,
     to toURL: URL,
-    allowOverwrite: Bool,
-    _ completion: @escaping @Sendable (Error?) -> Void
-  ) {
+    allowOverwrite: Bool
+  ) async throws {
     if fromURL.isFileURL {
-      downloadFromLocal(
+      try self.copyToDestination(
         from: fromURL,
         to: toURL,
-        allowOverwrite: allowOverwrite,
-        completion
+        allowOverwrite: allowOverwrite
       )
     } else {
-      downloadFromNetwork(
+      try await self.downloadFromNetwork(
         from: fromURL,
         to: toURL,
-        allowOverwrite: allowOverwrite,
-        completion
+        allowOverwrite: allowOverwrite
       )
     }
   }
@@ -84,48 +81,35 @@ public struct FileURLDownloader: URLDownloader {
   private func downloadFromNetwork(
     from fromURL: URL,
     to toURL: URL,
-    allowOverwrite: Bool,
-    _ completion: @escaping @Sendable (Error?) -> Void
-  ) {
-    networkManager.download(fromURL: fromURL) { destination, _, error in
-      guard let sourceURL = destination else {
-        return completion(error)
-      }
+    allowOverwrite: Bool
+  ) async throws {
+    let (sourceURL, _) = try await networkManager.download(fromURL: fromURL)
 
-      downloadFromLocal(
-        from: sourceURL,
-        to: toURL,
-        allowOverwrite: allowOverwrite,
-        completion
-      )
-    }
+    try self.copyToDestination(
+      from: sourceURL,
+      to: toURL,
+      allowOverwrite: allowOverwrite
+    )
   }
 
-  private func downloadFromLocal(
+  private func copyToDestination(
     from fromURL: URL,
     to toURL: URL,
-    allowOverwrite: Bool,
-    _ completion: @escaping @Sendable (Error?) -> Void
-  ) {
-    do {
-      // Create directory for the destination URL.
-      try fileManager.createDirectory(at: toURL.deletingLastPathComponent())
+    allowOverwrite: Bool
+  ) throws {
+    // Create directory for the destination URL.
+    try fileManager.createDirectory(at: toURL.deletingLastPathComponent())
 
-      let fileExists = fileManager.fileExists(atPath: toURL.path)
+    let fileExists = fileManager.fileExists(atPath: toURL.path)
 
-      // Check if the destination file already exists so to overwrite it,
-      // Otherwise just write the sourceURL at the give destination URL.
+    // Check if the destination file already exists so to overwrite it,
+    // Otherwise just write the sourceURL at the give destination URL.
 
-      if !fileExists {
-        try fileManager.copyItem(at: fromURL, to: toURL)
-      } else if allowOverwrite, fileExists {
-        try fileManager.removeItem(at: toURL)
-        try fileManager.copyItem(at: fromURL, to: toURL)
-      }
-
-      completion(nil)
-    } catch {
-      completion(error)
+    if !fileExists {
+      try fileManager.copyItem(at: fromURL, to: toURL)
+    } else if allowOverwrite, fileExists {
+      try fileManager.removeItem(at: toURL)
+      try fileManager.copyItem(at: fromURL, to: toURL)
     }
   }
 }

@@ -41,11 +41,10 @@ public protocol URLDownloader: Sendable {
   ///   - fromURL: The URL of the content to download.
   ///   - toURL: The destination URL for the content.
   ///   - allowOverwrite: Whether to overwrite the destination URL if it already exists.
-  ///   - completion: A completion handler that is called with the error, if any.
+  /// - Throws: Any error encountered while downloading or writing the content.
   func download(
     from fromURL: URL,
     to toURL: URL,
-    allowOverwrite: Bool,
-    _ completion: @escaping @Sendable (Error?) -> Void
-  )
+    allowOverwrite: Bool
+  ) async throws
 }

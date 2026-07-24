@@ -5,29 +5,27 @@ import XCTest
 internal final class FileURLDownloaderLocalFileTests: XCTestCase {
   private let networkManager = NetworkManagerSpy.success
 
-  internal func testSuccessfulDirectoryCreate() {
+  internal func testSuccessfulDirectoryCreate() async {
     let fileManager = FileManagerSpy.successfulDirectoryCreate
 
     let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
 
-    sut.download(
+    try? await sut.download(
       from: .temporaryDir,
       to: .temporaryDir,
       allowOverwrite: true
-    ) { _ in
-      // doing nothing
-    }
+    )
 
     XCTAssertTrue(fileManager.createDirectoryIsCalled)
   }
 
-  internal func testSuccessfulCopyItemWhenFileDoesNotExists() {
+  internal func testSuccessfulCopyItemWhenFileDoesNotExists() async {
     let fileManager = FileManagerSpy(
       fileExistsResult: .fileDoesNotExistsResult,
       copyItemResult: .success(())
     )
 
-    runFileURLDownloaderLocally(
+    await runFileURLDownloaderLocally(
       with: fileManager,
       and: networkManager,
       allowOverwrite: false
@@ -39,7 +37,7 @@ internal final class FileURLDownloaderLocalFileTests: XCTestCase {
     XCTAssertFalse(fileManager.removeItemIsCalled)
   }
 
-  internal func testFailedCopyItemWhenFileDoesNotExists() {
+  internal func testFailedCopyItemWhenFileDoesNotExists() async {
     let expectedError = FileManagerTestError.copyItem
 
     let fileManager = FileManagerSpy(
@@ -47,7 +45,7 @@ internal final class FileURLDownloaderLocalFileTests: XCTestCase {
       copyItemResult: .failure(expectedError)
     )
 
-    assertFileURLDownloaderLocally(
+    await assertFileURLDownloaderLocally(
       with: fileManager,
       and: networkManager,
       allowOverwrite: false,
@@ -60,14 +58,14 @@ internal final class FileURLDownloaderLocalFileTests: XCTestCase {
     XCTAssertFalse(fileManager.removeItemIsCalled)
   }
 
-  internal func testSuccessfulOverwriteWhenAllowExistedFileOverwrite() {
+  internal func testSuccessfulOverwriteWhenAllowExistedFileOverwrite() async {
     let fileManager = FileManagerSpy(
       fileExistsResult: .fileExistsResult,
       copyItemResult: .success(()),
       removeItemResult: .success(())
     )
 
-    runFileURLDownloaderLocally(
+    await runFileURLDownloaderLocally(
       with: fileManager,
       and: networkManager,
       allowOverwrite: true
@@ -79,7 +77,7 @@ internal final class FileURLDownloaderLocalFileTests: XCTestCase {
     XCTAssertTrue(fileManager.copyItemIsCalled)
   }
 
-  internal func testFailedRemoveItemWhenAllowExistedFileOverwrite() {
+  internal func testFailedRemoveItemWhenAllowExistedFileOverwrite() async {
     let expectedError = FileManagerTestError.removeItem
 
     let fileManager = FileManagerSpy(
@@ -88,7 +86,7 @@ internal final class FileURLDownloaderLocalFileTests: XCTestCase {
       removeItemResult: .failure(expectedError)
     )
 
-    assertFileURLDownloaderLocally(
+    await assertFileURLDownloaderLocally(
       with: fileManager,
       and: networkManager,
       allowOverwrite: true,
@@ -101,7 +99,7 @@ internal final class FileURLDownloaderLocalFileTests: XCTestCase {
     XCTAssertFalse(fileManager.copyItemIsCalled)
   }
 
-  internal func testFailedCopyItemWhenAllowExistedFileOverwrite() {
+  internal func testFailedCopyItemWhenAllowExistedFileOverwrite() async {
     let expectedError = FileManagerTestError.copyItem
 
     let fileManager = FileManagerSpy(
@@ -110,7 +108,7 @@ internal final class FileURLDownloaderLocalFileTests: XCTestCase {
       removeItemResult: .success(())
     )
 
-    assertFileURLDownloaderLocally(
+    await assertFileURLDownloaderLocally(
       with: fileManager,
       and: networkManager,
       allowOverwrite: true,

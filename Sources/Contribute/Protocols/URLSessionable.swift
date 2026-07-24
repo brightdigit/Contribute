@@ -35,37 +35,24 @@ import Foundation
 
 /// A protocol that defines a method for downloading data from a URL.
 ///
-/// Conformers must be `Sendable`: the completion handler is `@Sendable`, so the
-/// session itself may be captured across concurrency domains. `URLSession` — the
-/// standard conformer — is already `Sendable`.
+/// Conformers must be `Sendable`: a session may be captured across concurrency
+/// domains. `URLSession` — the standard conformer — is already `Sendable`.
 public protocol URLSessionable: Sendable {
   /// Downloads data from the specified URL.
   ///
-  /// - Parameters:
-  ///   - fromURL: The URL from which the data should be downloaded.
-  ///   - completion: A closure that is called when the download operation completes.
-  ///   It takes three optional parameters: the downloaded data's URL, the URL response,
-  ///   and any error that occurred during the download.
-  func download(
-    fromURL: URL,
-    completion: @escaping @Sendable (URL?, URLResponse?, Error?) -> Void
-  )
+  /// - Parameter fromURL: The URL from which the data should be downloaded.
+  /// - Returns: The temporary location of the downloaded file and its response.
+  /// - Throws: Any error encountered while performing the download.
+  func download(fromURL: URL) async throws -> (URL, URLResponse)
 }
 
 extension URLSession: URLSessionable {
   /// Downloads data from the specified URL using a download task.
   ///
-  /// - Parameters:
-  ///   - fromURL: The URL from which the data should be downloaded.
-  ///   - completion: A closure that is called when the download operation
-  ///     completes. It takes three optional parameters: the downloaded
-  ///     data's URL, the URL response, and any error that occurred during
-  ///     the download.
-  public func download(
-    fromURL: URL,
-    completion: @escaping @Sendable (URL?, URLResponse?, Error?) -> Void
-  ) {
-    downloadTask(with: fromURL, completionHandler: completion)
-      .resume()
+  /// - Parameter fromURL: The URL from which the data should be downloaded.
+  /// - Returns: The temporary location of the downloaded file and its response.
+  /// - Throws: Any error encountered while performing the download.
+  public func download(fromURL: URL) async throws -> (URL, URLResponse) {
+    try await self.download(from: fromURL)
   }
 }
