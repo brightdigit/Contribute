@@ -34,7 +34,11 @@ import Foundation
 #endif
 
 /// A protocol that defines a method for downloading data from a URL.
-public protocol URLSessionable {
+///
+/// Conformers must be `Sendable`: the completion handler is `@Sendable`, so the
+/// session itself may be captured across concurrency domains. `URLSession` — the
+/// standard conformer — is already `Sendable`.
+public protocol URLSessionable: Sendable {
   /// Downloads data from the specified URL.
   ///
   /// - Parameters:

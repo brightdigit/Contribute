@@ -30,7 +30,7 @@ extension XCTestCase {
     with fileManager: FileManagerSpy,
     and networkManager: NetworkManagerSpy,
     allowOverwrite: Bool,
-    _ completion: @escaping (_ expectedError: Error?) -> Void = { _ in }
+    _ completion: @escaping @Sendable (_ expectedError: Error?) -> Void = { _ in }
   ) {
     runFileURLDownloader(
       with: fileManager,
@@ -46,7 +46,7 @@ extension XCTestCase {
     and networkManager: NetworkManagerSpy,
     fromURL: URL,
     allowOverwrite: Bool,
-    _ completion: @escaping (_ expectedError: Error?) -> Void = { _ in }
+    _ completion: @escaping @Sendable (_ expectedError: Error?) -> Void = { _ in }
   ) {
     FileURLDownloader(
       networkManager: networkManager,

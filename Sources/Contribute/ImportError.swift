@@ -35,28 +35,28 @@ import Foundation
 public enum ImportError: Error {
   case directory(URL)
   case imageDownloads([URL: Error])
-  case invalidPodcastEpisodeFromRSSItem(Any)
+  case invalidPodcastEpisodeFromRSSItem(any Sendable)
   case invalidRSS(URL)
   case apiError(Error)
   case missingResponseFromPlaylistID(String, ResponseComponent)
   case unknownError(Error)
-  case missingFieldForVideo(Any, VideoField)
-  case missingVideoForEpisode(Any)
-  case missingFieldFromPodcastEpisode(Any, EpisodeField)
-  case duplicateTitle(String, forVideos: [Any])
+  case missingFieldForVideo(any Sendable, VideoField)
+  case missingVideoForEpisode(any Sendable)
+  case missingFieldFromPodcastEpisode(any Sendable, EpisodeField)
+  case duplicateTitle(String, forVideos: [any Sendable])
   case invalidMailchimp
   case newsletterMissingField(NewsletterField)
   case missingHTMLForCampaignID(String)
 
   /// The component of an API response that was missing or invalid.
-  public enum ResponseComponent {
+  public enum ResponseComponent: Sendable {
     case anyResponse
     case success
     case items
   }
 
   /// A field that was missing from a video.
-  public enum VideoField {
+  public enum VideoField: Sendable {
     case snippetTitle
     case id
     case duration
@@ -64,7 +64,7 @@ public enum ImportError: Error {
   }
 
   /// A field that was missing from a podcast episode.
-  public enum EpisodeField {
+  public enum EpisodeField: Sendable {
     case duration
     case title
     case episode
@@ -73,7 +73,7 @@ public enum ImportError: Error {
   }
 
   /// A field that was missing from a newsletter campaign.
-  public enum NewsletterField {
+  public enum NewsletterField: Sendable {
     case id
     case longArchiveURL
     case title

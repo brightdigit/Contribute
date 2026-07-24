@@ -189,7 +189,7 @@ Options handle overwriting existing files and pruning entries that have dropped 
 
 ## Requirements
 
-- Swift 5.8+
+- Swift 6.4+ (the package builds in Swift 6 language mode with complete strict concurrency checking)
 - macOS 12+, iOS 13+, tvOS 13+, watchOS 6+
 
 ## License

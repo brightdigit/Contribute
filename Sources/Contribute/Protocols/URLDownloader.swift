@@ -34,7 +34,7 @@ import Foundation
 #endif
 
 /// A protocol that downloads a content from a given URL.
-public protocol URLDownloader {
+public protocol URLDownloader: Sendable {
   /// Downloads the content from the given URL to the given destination URL.
   ///
   /// - Parameters:
@@ -46,6 +46,6 @@ public protocol URLDownloader {
     from fromURL: URL,
     to toURL: URL,
     allowOverwrite: Bool,
-    _ completion: @escaping (Error?) -> Void
+    _ completion: @escaping @Sendable (Error?) -> Void
   )
 }

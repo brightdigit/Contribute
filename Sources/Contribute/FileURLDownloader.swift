@@ -62,7 +62,7 @@ public struct FileURLDownloader: URLDownloader {
     from fromURL: URL,
     to toURL: URL,
     allowOverwrite: Bool,
-    _ completion: @escaping (Error?) -> Void
+    _ completion: @escaping @Sendable (Error?) -> Void
   ) {
     if fromURL.isFileURL {
       downloadFromLocal(
@@ -85,7 +85,7 @@ public struct FileURLDownloader: URLDownloader {
     from fromURL: URL,
     to toURL: URL,
     allowOverwrite: Bool,
-    _ completion: @escaping (Error?) -> Void
+    _ completion: @escaping @Sendable (Error?) -> Void
   ) {
     networkManager.download(fromURL: fromURL) { destination, _, error in
       guard let sourceURL = destination else {
@@ -105,7 +105,7 @@ public struct FileURLDownloader: URLDownloader {
     from fromURL: URL,
     to toURL: URL,
     allowOverwrite: Bool,
-    _ completion: @escaping (Error?) -> Void
+    _ completion: @escaping @Sendable (Error?) -> Void
   ) {
     do {
       // Create directory for the destination URL.
