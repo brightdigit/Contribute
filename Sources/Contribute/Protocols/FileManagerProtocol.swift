@@ -30,7 +30,11 @@
 import Foundation
 
 /// A protocol that defines file management methods.
-public protocol FileManagerProtocol {
+///
+/// Conformers must be `Sendable`: file managers are captured by the `@Sendable`
+/// download completion handlers in ``FileURLDownloader``. `FileManager` — the
+/// standard conformer — is already `Sendable`.
+public protocol FileManagerProtocol: Sendable {
   /// Creates a directory at the specified URL.
   ///
   /// - Parameters:

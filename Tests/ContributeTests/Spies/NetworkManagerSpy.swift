@@ -15,25 +15,22 @@ internal final class NetworkManagerSpy: URLSessionable {
     self.result = result
   }
 
-  internal func download(
-    fromURL: URL,
-    completion: @escaping @Sendable (URL?, URLResponse?, Error?) -> Void
-  ) {
+  internal func download(fromURL: URL) async throws -> (URL, URLResponse) {
     switch result {
     case .success:
-      completion(
-        .temporaryDir,
-        HTTPURLResponse(
-          url: fromURL,
-          statusCode: 200,
-          httpVersion: nil,
-          headerFields: nil
-        ),
-        nil
+      let response = HTTPURLResponse(
+        url: fromURL,
+        statusCode: 200,
+        httpVersion: nil,
+        headerFields: nil
       )
+      guard let response else {
+        throw NetworkManagerTestError.networkDownload
+      }
+      return (.temporaryDir, response)
 
     case .failure:
-      completion(nil, nil, NetworkManagerTestError.networkDownload)
+      throw NetworkManagerTestError.networkDownload
     }
   }
 }

@@ -34,22 +34,38 @@ import Foundation
 #endif
 
 /// A struct that downloads files from URLs using the `URLSession` class, or .
+///
+/// On WASI there is no `URLSession`, so remote downloads are unavailable: the
+/// `networkManager` and the network code path are gated behind `#if !os(WASI)`
+/// and a non-file URL throws ``ImportError/networkUnavailable``. Copying from a
+/// `file:` URL works on every platform.
 public struct FileURLDownloader: URLDownloader {
-  private let networkManager: URLSessionable
+  #if !os(WASI)
+    private let networkManager: URLSessionable
+  #endif
   private let fileManager: FileManagerProtocol
 
-  /// Initializes the downloader with the given network and file managers.
-  ///
-  /// - Parameters:
-  ///   - networkManager: The `URLSessionable` instance to use for downloading files.
-  ///   - fileManager: The `FileManager` instance to use for saving downloaded files.
-  public init(
-    networkManager: URLSessionable = URLSession.shared,
-    fileManager: FileManagerProtocol = FileManager.default
-  ) {
-    self.networkManager = networkManager
-    self.fileManager = fileManager
-  }
+  #if !os(WASI)
+    /// Initializes the downloader with the given network and file managers.
+    ///
+    /// - Parameters:
+    ///   - networkManager: The `URLSessionable` instance to use for downloading files.
+    ///   - fileManager: The `FileManager` instance to use for saving downloaded files.
+    public init(
+      networkManager: URLSessionable = URLSession.shared,
+      fileManager: FileManagerProtocol = FileManager.default
+    ) {
+      self.networkManager = networkManager
+      self.fileManager = fileManager
+    }
+  #else
+    /// Initializes the downloader with the given file manager.
+    ///
+    /// - Parameter fileManager: The `FileManager` instance to use for saving files.
+    public init(fileManager: FileManagerProtocol = FileManager.default) {
+      self.fileManager = fileManager
+    }
+  #endif
 
   /// Downloads the file from the given URL to the given destination URL.
   ///
@@ -57,75 +73,66 @@ public struct FileURLDownloader: URLDownloader {
   ///   - fromURL: The URL of the file to download.
   ///   - toURL: The destination URL for the file.
   ///   - allowOverwrite: Whether to overwrite the destination file if it already exists.
-  ///   - completion: A completion handler that is called with the error, if any.
+  /// - Throws: Any error encountered while downloading or copying the file. On WASI,
+  ///   ``ImportError/networkUnavailable`` for a non-`file:` URL.
   public func download(
     from fromURL: URL,
     to toURL: URL,
-    allowOverwrite: Bool,
-    _ completion: @escaping (Error?) -> Void
-  ) {
-    if fromURL.isFileURL {
-      downloadFromLocal(
+    allowOverwrite: Bool
+  ) async throws {
+    guard !fromURL.isFileURL else {
+      return try self.copyToDestination(
         from: fromURL,
         to: toURL,
-        allowOverwrite: allowOverwrite,
-        completion
-      )
-    } else {
-      downloadFromNetwork(
-        from: fromURL,
-        to: toURL,
-        allowOverwrite: allowOverwrite,
-        completion
+        allowOverwrite: allowOverwrite
       )
     }
+
+    #if os(WASI)
+      throw URLDownloaderError.networkUnavailable(fromURL)
+    #else
+      try await self.downloadFromNetwork(
+        from: fromURL,
+        to: toURL,
+        allowOverwrite: allowOverwrite
+      )
+    #endif
   }
 
-  private func downloadFromNetwork(
-    from fromURL: URL,
-    to toURL: URL,
-    allowOverwrite: Bool,
-    _ completion: @escaping (Error?) -> Void
-  ) {
-    networkManager.download(fromURL: fromURL) { destination, _, error in
-      guard let sourceURL = destination else {
-        return completion(error)
-      }
+  #if !os(WASI)
+    private func downloadFromNetwork(
+      from fromURL: URL,
+      to toURL: URL,
+      allowOverwrite: Bool
+    ) async throws {
+      let (sourceURL, _) = try await networkManager.download(fromURL: fromURL)
 
-      downloadFromLocal(
+      try self.copyToDestination(
         from: sourceURL,
         to: toURL,
-        allowOverwrite: allowOverwrite,
-        completion
+        allowOverwrite: allowOverwrite
       )
     }
-  }
+  #endif
 
-  private func downloadFromLocal(
+  private func copyToDestination(
     from fromURL: URL,
     to toURL: URL,
-    allowOverwrite: Bool,
-    _ completion: @escaping (Error?) -> Void
-  ) {
-    do {
-      // Create directory for the destination URL.
-      try fileManager.createDirectory(at: toURL.deletingLastPathComponent())
+    allowOverwrite: Bool
+  ) throws {
+    // Create directory for the destination URL.
+    try fileManager.createDirectory(at: toURL.deletingLastPathComponent())
 
-      let fileExists = fileManager.fileExists(atPath: toURL.path)
+    let fileExists = fileManager.fileExists(atPath: toURL.path)
 
-      // Check if the destination file already exists so to overwrite it,
-      // Otherwise just write the sourceURL at the give destination URL.
+    // Check if the destination file already exists so to overwrite it,
+    // Otherwise just write the sourceURL at the give destination URL.
 
-      if !fileExists {
-        try fileManager.copyItem(at: fromURL, to: toURL)
-      } else if allowOverwrite, fileExists {
-        try fileManager.removeItem(at: toURL)
-        try fileManager.copyItem(at: fromURL, to: toURL)
-      }
-
-      completion(nil)
-    } catch {
-      completion(error)
+    if !fileExists {
+      try fileManager.copyItem(at: fromURL, to: toURL)
+    } else if allowOverwrite, fileExists {
+      try fileManager.removeItem(at: toURL)
+      try fileManager.copyItem(at: fromURL, to: toURL)
     }
   }
 }

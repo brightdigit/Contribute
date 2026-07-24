@@ -30,7 +30,7 @@
 import Foundation
 
 /// A type that represents the options that can be used when building markdown content.
-public struct MarkdownContentBuilderOptions: OptionSet {
+public struct MarkdownContentBuilderOptions: OptionSet, Sendable {
   /// The raw value type used to store the option set.
   public typealias RawValue = Int
 

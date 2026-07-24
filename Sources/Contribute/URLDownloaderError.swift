@@ -1,5 +1,5 @@
 //
-//  URLDownloader.swift
+//  URLDownloaderError.swift
 //  Contribute
 //
 //  Created by Leo Dion.
@@ -29,22 +29,12 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-  import FoundationNetworking
-#endif
-
-/// A protocol that downloads a content from a given URL.
-public protocol URLDownloader: Sendable {
-  /// Downloads the content from the given URL to the given destination URL.
+/// Errors thrown by ``URLDownloader`` implementations.
+public enum URLDownloaderError: Error, Sendable {
+  /// A remote URL was requested on a platform with no networking support.
   ///
-  /// - Parameters:
-  ///   - fromURL: The URL of the content to download.
-  ///   - toURL: The destination URL for the content.
-  ///   - allowOverwrite: Whether to overwrite the destination URL if it already exists.
-  /// - Throws: Any error encountered while downloading or writing the content.
-  func download(
-    from fromURL: URL,
-    to toURL: URL,
-    allowOverwrite: Bool
-  ) async throws
+  /// `URLSession` is unavailable on WASI, so ``FileURLDownloader`` can only copy
+  /// from `file:` URLs there. Supply a custom ``URLDownloader`` conformance if a
+  /// wasm build needs to fetch remote content.
+  case networkUnavailable(URL)
 }

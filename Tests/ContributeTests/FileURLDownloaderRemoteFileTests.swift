@@ -5,50 +5,33 @@ import XCTest
 internal final class FileURLDownloaderRemoteFileTests: XCTestCase {
   private let fileManager = FileManagerSpy()
 
-  internal func testSuccessfulNetworkCall() throws {
+  internal func testSuccessfulNetworkCall() async throws {
     let networkManager = NetworkManagerSpy.success
 
     let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
 
-    let expectation = XCTestExpectation()
-
-    sut.download(
+    try await sut.download(
       from: try makeURL(from: "https://www.google.com"),
       to: .temporaryDir,
       allowOverwrite: true
-    ) { error in
-      if error == nil {
-        expectation.fulfill()
-        return
-      }
-
-      XCTFail("Expected successful network call")
-    }
-
-    wait(for: [expectation], timeout: 0.100)
+    )
   }
 
-  internal func testFailedNetworkCall() throws {
+  internal func testFailedNetworkCall() async throws {
     let networkManager = NetworkManagerSpy.failure
 
     let sut = FileURLDownloader(networkManager: networkManager, fileManager: fileManager)
 
-    let expectation = XCTestExpectation()
-
-    sut.download(
-      from: try makeURL(from: "https://www.google.com"),
-      to: .temporaryDir,
-      allowOverwrite: true
-    ) { error in
-      guard error != nil else {
-        XCTFail("Expected failed network call")
-        return
-      }
-
-      expectation.fulfill()
+    do {
+      try await sut.download(
+        from: try makeURL(from: "https://www.google.com"),
+        to: .temporaryDir,
+        allowOverwrite: true
+      )
+      XCTFail("Expected failed network call")
+    } catch let error as NetworkManagerTestError {
+      XCTAssertEqual(error, .networkDownload)
     }
-
-    wait(for: [expectation], timeout: 0.100)
   }
 
   // MARK: - Helpers
